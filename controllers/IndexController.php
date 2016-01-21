@@ -4,7 +4,8 @@ class IndexController extends CController {
 
 	public function actionIndex() {
 
-		$this->redirect('/contents/');
+		//$this->redirect('/contents/');
+		$this->render('');
 	}
 
 }
