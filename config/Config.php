@@ -1,13 +1,13 @@
 <?php
 
-define('STATUS_DRAFT'     , 1); // Черновик
-define('STATUS_AGREE'     , 2); // Согласование цеха
-define('STATUS_REVIEW'    , 3); // рассмотрение ГИ
-define('STATUS_ACCEPT'    , 4); // Разрешенная ГИ
-define('STATUS_OPEN'      , 5); // Открыта ННСом
-define('STATUS_COMPLETE'  , 6); // Прикрыта (исполнена)
-define('STATUS_REJECT'    , 7); // Отказана (цехом или ГИ)
-define('STATUS_CLOSE'     , 8); // закрыта
+define('STATUS_DRAFT', 1); // Черновик
+define('STATUS_AGREE', 2); // Согласование цеха
+define('STATUS_REVIEW', 3); // рассмотрение ГИ
+define('STATUS_ACCEPT', 4); // Разрешенная ГИ
+define('STATUS_OPEN', 5); // Открыта ННСом
+define('STATUS_COMPLETE', 6); // Прикрыта (исполнена)
+define('STATUS_REJECT', 7); // Отказана (цехом или ГИ)
+define('STATUS_CLOSE', 8); // закрыта
 
 class Configuration {
 
@@ -15,7 +15,7 @@ class Configuration {
 		'host' => 'localhost',
 		'user' => 'root',
 		'pass' => 'fell1x',
-		'base' => '',
+		'base' => 'auth-server',
 	];
 
 	public static $scriptList = [
@@ -32,13 +32,13 @@ class Configuration {
 		'common',
 	];
 
-	public static $siteName  = 'Журнал заявок НГРЭС';
-	public static $brandName = 'Журнал заявок Нерюнгринской ГРЭС';
+	public static $siteName  = 'Единый сервер авторизации';
+	public static $brandName = 'Сервер авторизации';
 
-	public static $ROLE_NSS   = "1";
-	public static $ROLE_ME    = "2";
-	public static $ROLE_USER  = "3";
+	public static $ROLE_NSS  = "1";
+	public static $ROLE_ME   = "2";
+	public static $ROLE_USER = "3";
 
-	public static $passkey = 'qicjlG528b5SOE63cGsFeXKmiZ02Kl32';
+	public static $passkey = 'uYbZNr9p8W3bN3PoTL0ES2C44vK18hM8';
 
 }

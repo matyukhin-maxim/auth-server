@@ -56,5 +56,4 @@ $(function() {
     $('[data-toggle="popover"]').popover();
 
     showPopup();
-
 });

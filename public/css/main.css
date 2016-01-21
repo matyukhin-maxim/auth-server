@@ -13,15 +13,10 @@ footer .text-muted {
     margin: 20px 0;
 }
 
-/*.footer > .container {*/
-    /*padding-right: 15px;*/
-    /*padding-left: 15px;*/
-/*}*/
-
 body {
-    /*background-color: #cfcfcf;*/
-    background: url("../back.jpg") fixed;
-    background-size: 100% 100%;
+    background-color: #cfcfcf;
+    /*background: url("../back.jpg") fixed;*/
+    /*background-size: 100% 100%;*/
     opacity: 0.95;
 }
 

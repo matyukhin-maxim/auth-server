@@ -29,13 +29,6 @@
 		<a class="navbar-brand" href="/">
 			<?= $brand; ?>
 		</a>
-		<?php if ($authdata !== false): ?>
-			<ul class="nav navbar-left hidden-xs">
-				<li class="role-name alert-info strong text-center" title="Роль">
-					<?= get_param($authdata, 'rolename', '?'); ?>
-				</li>
-			</ul>
-		<?php endif; ?>
 	</div>
 	<div id="navbar" class="collapse navbar-collapse">
 		<ul class="nav navbar-top-links navbar-right">
@@ -45,9 +38,6 @@
 						Вход</a>
 				</li>
 			<?php else: ?>
-				<li class="role-name alert-info strong text-center visible-xs" title="Роль">
-					<?= get_param($authdata, 'rolename', '?'); ?>
-				</li>
 				<li class="navbar-text"><span>Вы вошли как:</span></li>
 				<li class="dropdown">
 					<a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -60,14 +50,7 @@
 							<?= get_param($authdata, 'fullname', '-'); ?>
 						</li>
 						<li class="divider"></li>
-						<li>
-							<a href="/auth/changepassword/">
-								<i class="glyphicon glyphicon-lock"></i>
-								Изменить пароль
-							</a>
-						</li>
-						<li>
-							<a href="/auth/logout/">
+						<li><a href="/auth/logout/">
 								<i class="glyphicon glyphicon-log-out"></i>
 								Выход
 							</a>
@@ -75,10 +58,6 @@
 					</ul>
 				</li>
 			<?php endif; ?>
-			<li>
-				<a href="/about/"><i class="glyphicon glyphicon-question-sign"></i>
-					Помощь</a>
-			</li>
 		</ul>
 	</div>
 
