@@ -48,6 +48,7 @@ body {
     bottom: 60px;
     left: 0;
     z-index: 1050;
+    display: none;
 }
 
 .pagination {
@@ -88,9 +89,13 @@ body {
     margin-right: 15px;
 }
 
+.last-menu-item {
+    margin-right: 15px;
+}
+
 .navbar-top-links li a {
     padding: 15px;
-    min-height: 50px;
+    /*min-height: 50px;*/
 }
 
 .navbar-top-links .dropdown-menu li {
@@ -300,4 +305,8 @@ textarea.reason {
 
 .compact, .compact > [class*="col-"] {
     padding: 7px;
+}
+
+.ui-autocomplete {
+    z-index: 3 !important;
 }

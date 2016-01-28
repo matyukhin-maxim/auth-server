@@ -12,8 +12,8 @@
 	<link rel="stylesheet" href="/public/css/bootstrap-datetimepicker.min.css"/>
 	<link rel="stylesheet" href="/public/css/main.css"/>
 	<!--[if lt IE 9]>
-	<script src="./public/js/html5shiv.min.js"></script>
-	<script src="./public/js/respond.min.js"></script>
+	<script src="/public/js/lib/html5shiv.min.js"></script>
+	<script src="/public/js/lib/respond.min.js"></script>
 	<![endif]-->
 </head>
 <body>
@@ -26,20 +26,20 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		</button>
-		<a class="navbar-brand" href="/">
+		<a class="navbar-brand strong" href="/">
 			<?= $brand; ?>
 		</a>
 	</div>
 	<div id="navbar" class="collapse navbar-collapse">
 		<ul class="nav navbar-top-links navbar-right">
 			<?php if ($authdata === false): ?>
-				<li>
+				<li class="last-menu-item">
 					<a href="/auth/"><i class="glyphicon glyphicon-log-in"></i>
 						Вход</a>
 				</li>
 			<?php else: ?>
 				<li class="navbar-text"><span>Вы вошли как:</span></li>
-				<li class="dropdown">
+				<li class="dropdown last-menu-item">
 					<a class="dropdown-toggle" data-toggle="dropdown" href="#">
 						<i class="glyphicon glyphicon-user"></i>
 						<?= get_param($authdata, 'login', 'n/a'); ?>
