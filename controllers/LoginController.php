@@ -27,4 +27,14 @@ class LoginController extends CController {
 		$data = $this->model->getUsers($filter);
 		echo json_encode($data);
 	}
+
+	public function ajaxCheck() {
+
+		$data = filter_input_array(INPUT_POST, [
+			'login' => FILTER_SANITIZE_STRING,
+			'password' => FILTER_SANITIZE_STRING,
+		]);
+
+		var_dump($data);
+	}
 }

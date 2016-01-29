@@ -10,7 +10,7 @@ $(function () {
     }
 
     $('#user-field').autocomplete({
-        delay: 1500,
+        delay: 500,
         minLength: 3,
         source: function (request, response) {
             $.post('/login/complete/', {q: request.term},
@@ -52,13 +52,12 @@ $(function () {
         e.preventDefault();
 
         $.ajax({
-            url: 'http://bid-journal.asu.ngres/auth/login/',
+            url: '/login/check/',
             type: 'post',
-            //crossDomain: true,
-            data: {login: 'ктц', password:'123'},
-            //xhrFields: {withCredentials: true},
+            data: $('#login-form').serialize(),
             success: function(data) {
-                console.log(data);
+                $('#response').html(data);
+                showPopup();
             }
         });
     });
