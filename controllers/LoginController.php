@@ -6,6 +6,8 @@
  * Date: 28.01.16
  * Time: 20:52
  */
+
+/** @property LoginModel $model*/
 class LoginController extends CController {
 
 	public function actionIndex() {
@@ -18,10 +20,11 @@ class LoginController extends CController {
 
 	public function ajaxComplete() {
 
-		echo json_encode([
-			['fullname' => 'Max', 'tabnumber' => 1681],
-			['fullname' => 'Fax', 'tabnumber' => 1423],
-			['fullname' => 'Pax', 'tabnumber' => 1754],
-		]);
+		$filter = filter_input(INPUT_POST, 'q', FILTER_SANITIZE_STRING);
+
+		// запрос будем строить опираясь на то, что ввели в поисковой строке (число / строка)
+		// если это число, то будем искать по табельному номеру, иначе по совпадению ФИО
+		$data = $this->model->getUsers($filter);
+		echo json_encode($data);
 	}
 }

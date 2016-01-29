@@ -11,14 +11,14 @@
 							<input class="form-control" placeholder="Фамилия / табельный номер"
 							       name="login" type="text" id="user-field"
 							       autofocus required autocomplete="off">
-							<input name="userid" type="hidden"/>
+							<input id="user-id" name="tabel" type="hidden"/>
 						</div>
 						<div class="form-group">
 							<label>Пароль пользователя</label>
 							<input class="form-control" placeholder="Пароль"
 							       name="password" type="password" required autocomplete="off">
 						</div>
-						<button id="btn-login" class="btn btn-primary btn-block" type="submit">Войти</button>
+						<button id="btn-login" class="btn btn-primary btn-block" type="button">Войти</button>
 					</fieldset>
 				</form>
 			</div>

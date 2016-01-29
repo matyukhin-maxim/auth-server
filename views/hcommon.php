@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="/public/css/bootstrap-theme.css"/>
 	<link rel="stylesheet" href="/public/css/bootstrap-select.min.css"/>
 	<link rel="stylesheet" href="/public/css/bootstrap-datetimepicker.min.css"/>
+	<link rel="stylesheet" href="/public/css/jquery-ui.css"/>
 	<link rel="stylesheet" href="/public/css/main.css"/>
 	<!--[if lt IE 9]>
 	<script src="/public/js/lib/html5shiv.min.js"></script>
@@ -27,14 +28,14 @@
 			<span class="icon-bar"></span>
 		</button>
 		<a class="navbar-brand strong" href="/">
-			<?= $brand; ?>
+			<span><?= $brand; ?></span>
 		</a>
 	</div>
 	<div id="navbar" class="collapse navbar-collapse">
 		<ul class="nav navbar-top-links navbar-right">
 			<?php if ($authdata === false): ?>
 				<li class="last-menu-item">
-					<a href="/auth/"><i class="glyphicon glyphicon-log-in"></i>
+					<a href="/login/"><i class="glyphicon glyphicon-log-in"></i>
 						Вход</a>
 				</li>
 			<?php else: ?>
@@ -50,7 +51,7 @@
 							<?= get_param($authdata, 'fullname', '-'); ?>
 						</li>
 						<li class="divider"></li>
-						<li><a href="/auth/logout/">
+						<li><a href="/login/exit/">
 								<i class="glyphicon glyphicon-log-out"></i>
 								Выход
 							</a>

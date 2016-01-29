@@ -6,7 +6,7 @@ class Configuration {
 		'host' => 'localhost',
 		'user' => 'root',
 		'pass' => 'fell1x',
-		'base' => 'auth-server',
+		'base' => 'openid',
 	];
 
 	public static $scriptList = [
