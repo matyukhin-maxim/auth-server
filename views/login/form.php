@@ -4,7 +4,8 @@
 		<div class="panel panel-primary">
 			<div class="panel-heading strong">Авторизация пользователя</div>
 			<div class="panel-body">
-				<form id="login-form" method="post" autocomplete="off" action="/login/check/">
+				<form id="login-form" method="post" autocomplete="off"
+				      action="http://bid-journal.ru/auth/login/">
 					<fieldset>
 						<div class="form-group">
 							<label>Фамилия или табельный номер</label>
