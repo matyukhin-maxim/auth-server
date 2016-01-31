@@ -12,6 +12,7 @@ $(function () {
     $('#user-field').autocomplete({
         delay: 500,
         minLength: 3,
+        autoFocus: true,
         source: function (request, response) {
             $.post('/login/complete/', {q: request.term},
             function(data) {
@@ -48,7 +49,11 @@ $(function () {
             .appendTo( ul );
     };
 
-    $('#btn-login').click(function (e) {
+    $('[type="password"]').keydown(function (e) {
+        if (e.which == 13) $('#btn-login').trigger('click');
+    });
+
+    $('#btn--login').click(function (e) {
         e.preventDefault();
 
         $.ajax({
@@ -56,7 +61,7 @@ $(function () {
             type: 'post',
             data: $('#login-form').serialize(),
             success: function(data) {
-                $('#response').html(data);
+                //$('#response').html(data);
                 showPopup();
             }
         });

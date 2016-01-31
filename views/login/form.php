@@ -18,7 +18,7 @@
 							<input class="form-control" placeholder="Пароль"
 							       name="password" type="password" required autocomplete="off">
 						</div>
-						<button id="btn-login" class="btn btn-primary btn-block" type="button">Войти</button>
+						<button id="btn-login" class="btn btn-primary btn-block" type="submit">Войти</button>
 					</fieldset>
 				</form>
 			</div>

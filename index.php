@@ -18,7 +18,7 @@ $query = strtolower(rtrim(get_param($_GET, 'url', 'index'), '/'));
 $url = explode('/', $query);
 
 mb_internal_encoding("UTF-8");
-Session::start();
+//Session::start();
 
 try {
 

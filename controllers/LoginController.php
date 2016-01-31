@@ -7,7 +7,7 @@
  * Time: 20:52
  */
 
-/** @property LoginModel $model*/
+/** @property LoginModel $model */
 class LoginController extends CController {
 
 	public function actionIndex() {
@@ -28,13 +28,49 @@ class LoginController extends CController {
 		echo json_encode($data);
 	}
 
-	public function ajaxCheck() {
+	public function actionCheck() {
 
+		/*
 		$data = filter_input_array(INPUT_POST, [
-			'login' => FILTER_SANITIZE_STRING,
+			'tabel' => FILTER_VALIDATE_INT,
 			'password' => FILTER_SANITIZE_STRING,
 		]);
+		*/
 
-		var_dump($data);
+		$data = [
+			'login' => 'цтаи',
+			'password' => 123,
+		];
+
+		$headers = array("X-Requested-With: XMLHttpRequest");
+		//$hndl = tmpfile();
+		//$md = stream_get_meta_data($hndl);
+		//$cookie = get_param($md, 'uri');
+		//var_dump($cookie);
+		//fclose($hndl);
+
+		$instance = curl_init();
+		curl_setopt_array($instance, [
+			CURLOPT_TIMEOUT => 5,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTPHEADER => $headers,
+			//CURLOPT_COOKIEJAR => $cookie,
+			//CURLOPT_COOKIEFILE => $cookie,
+			CURLOPT_COOKIESESSION => true,
+			CURLOPT_URL => 'http://bid-journal.ru/auth/login/',
+			CURLOPT_USERAGENT => get_param($_SERVER, 'HTTP_USER_AGENT'),
+			CURLOPT_POST => true,
+			CURLOPT_POSTFIELDS => $data,
+		]);
+
+		$response = curl_exec($instance);
+		//var_dump(curl_error($instance));
+		//echo ($response);
+		curl_close($instance);
+
+		//unlink($cookie);
+
+		$this->redirect("http://bid-journal.ru/?PHPSESSID=$response");
 	}
 }

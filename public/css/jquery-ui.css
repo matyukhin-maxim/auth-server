@@ -5,7 +5,7 @@
 * Copyright jQuery Foundation and other contributors; Licensed MIT */
 
 .ui-autocomplete {
-    max-height: 180px;
+    max-height: 220px;
     overflow-y: auto;
     /* prevent horizontal scrollbar */
     overflow-x: hidden;
@@ -14,7 +14,7 @@
  * we use height instead, but this forces the menu to always be this tall
  */
 * html .ui-autocomplete {
-    height: 180px;
+    height: 220px;
 }
 
 /* Layout helpers
@@ -133,7 +133,7 @@
 }
 .ui-menu .ui-state-focus,
 .ui-menu .ui-state-active {
-	margin: -1px;
+	/*margin: -1px;*/
 }
 
 /* icon support */
