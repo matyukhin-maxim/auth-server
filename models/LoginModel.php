@@ -8,7 +8,7 @@
  */
 class LoginModel extends CModel {
 
-	public function getUsers($filter) {
+	public function getUsers($filter, $limit = 0) {
 
 		if (empty($filter)) return [];
 		$field = 'id';
@@ -20,6 +20,7 @@ class LoginModel extends CModel {
 			$field = 'fullname';
 		}
 
+		$limit = $limit ? sprintf("LIMIT %d ", intval($limit)) : '';
 		$result = $this->select("
         SELECT
           id       value,
@@ -27,7 +28,9 @@ class LoginModel extends CModel {
         FROM personal
         WHERE $field LIKE :filter
               AND deleted = 0
-        ORDER BY fullname", ['filter' => $filter]);
+        ORDER BY fullname
+        $limit
+        ", ['filter' => $filter]);
 
 		return $result;
 	}

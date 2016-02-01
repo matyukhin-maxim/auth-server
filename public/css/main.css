@@ -22,8 +22,8 @@ body {
 }
 
 .panel-response {
-    min-height: 350px;
-    max-height: 350px;
+    min-height: 550px;
+    max-height: 550px;
     overflow-y: auto;
 }
 
@@ -151,18 +151,10 @@ body {
     outline: none;
 }
 
-.role-name::before, .role-name::after {
-    content: '|';
-}
-
 .role-name {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-
-    margin: 0;
-    height: 50px;
-    padding: 15px 20px;
 }
 
 th {
@@ -274,12 +266,6 @@ textarea.reason {
     font-size: 1em;
 }
 
-.ticket-window {
-    min-height: 450px;
-    max-height: 450px;
-    overflow-y: auto;
-}
-
 ::-webkit-scrollbar {
     display: none;
 }
@@ -310,4 +296,8 @@ textarea.reason {
 
 .ui-autocomplete {
     z-index: 3 !important;
+}
+
+.title {
+    font-size: 1.2em;
 }

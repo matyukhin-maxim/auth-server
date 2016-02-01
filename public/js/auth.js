@@ -30,11 +30,12 @@ $(function () {
         },
         response: function (ev, ui) {
             $(this).parent().toggleClass('has-error', ui.content.length === 0);
+            $('#user-id').val('');
+
             if (ui.content.length === 0) {
                 showPopup('Пользователь не найден. Проверьте правильность ввода');
                 $(this).val('');
             }
-
             // автозавершение ввода, если в списке "живого поиска" остался только один вариант
             if (ui.content.length === 1) {
                 ui.item = ui.content[0];
@@ -53,16 +54,20 @@ $(function () {
         if (e.which == 13) $('#btn-login').trigger('click');
     });
 
-    $('#btn--login').click(function (e) {
+    $('#btn-login').click(function (e) {
         e.preventDefault();
+        if ($('#user-id').val().length === 0) {
+            showPopup('Ползователь не указан.');
+            $('#login-form').trigger('reset');
+            return false;
+        }
 
         $.ajax({
             url: '/login/check/',
             type: 'post',
             data: $('#login-form').serialize(),
             success: function(data) {
-                //$('#response').html(data);
-                showPopup();
+                data.length ? $('#response').html(data) : showPopup();
             }
         });
     });

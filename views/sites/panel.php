@@ -1,7 +1,7 @@
 <br><br>
 
 <div class="row">
-	<div class="alert alert-info">
+	<div class="alert alert-info strong">
 		<p id="encode"></p>
 	</div>
 </div>
@@ -13,8 +13,8 @@
 		</div>
 		<div class="panel-footer clearfix">
 			<div class="pull-right">
-				<button id="e" class="btn btn-primary btn-sm">Закодировать</button>
-				<button id="d" class="btn btn-default btn-sm">Раскодировать</button>
+				<button class="btn btn-primary btn-sm">Закодировать</button>
+				<button class="btn btn-default btn-sm">Раскодировать</button>
 			</div>
 		</div>
 	</div>
