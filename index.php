@@ -66,7 +66,8 @@ try {
 	$message = $exc->getMessage();
 
 	setcookie('status', $message, time() + 5, '/');
-	header('Location: /');
+	$location = get_param($_SERVER, 'HTTP_REFERER', '/');
+	header("Location: $location");
 	//echo $message . PHP_EOL;
 	exit();
 }

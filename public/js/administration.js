@@ -21,6 +21,23 @@ $(function () {
         tmr = setTimeout(function () {
             showusers();
             showPopup();
-        }, 500);
+        }, 1000);
     });
+
+    $('#add').click(function (e) {
+        e.preventDefault();
+
+        var gname = $('#g-name');
+        if (gname.length) {
+            $.ajax({
+                type: 'post',
+                url : '/admin/groupadd/',
+                data: {name: gname.val()},
+                success: function(data) {
+                    gname.val('');
+                    data.length ? showPopup() : location.reload();
+                }
+            });
+        }
+    })
 });
