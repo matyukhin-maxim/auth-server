@@ -22,8 +22,8 @@ body {
 }
 
 .panel-response {
-    min-height: 300px;
-    max-height: 300px;
+    min-height: 400px;
+    max-height: 400px;
     overflow-y: auto;
 }
 
@@ -49,7 +49,6 @@ body {
     bottom: 60px;
     left: 0;
     z-index: 1050;
-    display: none;
 }
 
 .pagination {
@@ -168,9 +167,9 @@ th {
 
 .screen-wnd {
     overflow-y: auto;
-    min-height: 270px;
-    max-height: 270px;
-    /*height: 270px;*/
+    /*min-height: 240px;*/
+    /*max-height: 240px;*/
+    /*!*height: 270px;*!*/
 }
 
 /* unstack tabs on small screen */
@@ -182,39 +181,32 @@ th {
 }
 
 @media (min-width: 768px) {
-    .screen-wnd {
-        min-height: 420px;
-        max-height: 420px;
-        /*height: 420px;*/
-    }
+    /*.screen-wnd {*/
+        /*min-height: 380px;*/
+        /*max-height: 380px;*/
+        /*!*height: 420px;*!*/
+    /*}*/
 }
 
 @media (min-width: 992px) {
-    .screen-wnd {
-        min-height: 550px;
-        max-height: 550px;
-        /*height: 550px;*/
-    }
+    /*.screen-wnd {*/
+        /*min-height: 510px;*/
+        /*max-height: 510px;*/
+        /*!*height: 550px;*!*/
+    /*}*/
 }
 
 @media (min-width: 1200px) {
-    .screen-wnd {
-        min-height: 650px;
-        max-height: 650px;
-        /*height: 650px;*/
-    }
+    /*.screen-wnd {*/
+        /*min-height: 610px;*/
+        /*max-height: 610px;*/
+        /*!*height: 650px;*!*/
+    /*}*/
 }
 
 @media (min-width: 1400px) {
-
     .container {
         width: 1380px;
-    }
-
-    .screen-wnd {
-        min-height: 720px;
-        max-height: 720px;
-        /*max-height: 720px;*/
     }
 }
 
@@ -305,4 +297,8 @@ textarea.reason {
 .nmnp {
     margin: 0;
     padding: 0;
+}
+
+a:focus, a:hover {
+    outline: none; !important;
 }

@@ -19,11 +19,17 @@ function showPopup(text, tclass) {
             });
         }, 1000);
     }
-};
+}
 
 $(function() {
 
     moment.locale('ru');
+
+    $.ajaxSetup({
+        complete: function() {
+            showPopup();
+        }
+    });
 
     $('.input-group.date > input').prop('readonly', true);
     $('.input-group.date').datetimepicker({

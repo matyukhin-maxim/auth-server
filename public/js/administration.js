@@ -10,17 +10,15 @@ $(function () {
             data : {q: $('#filter').val()},
             success: function(data) {
                 $('.panel-response').html(data);
-                showPopup();
             }
         });
     }
 
-    var tmr = undefined;
+    var tmr = 0;
     $('#filter').on('keyup change', function () {
         clearTimeout(tmr);
         tmr = setTimeout(function () {
             showusers();
-            showPopup();
         }, 1000);
     });
 
@@ -35,9 +33,10 @@ $(function () {
                 data: {name: gname.val()},
                 success: function(data) {
                     gname.val('');
-                    data.length ? showPopup() : location.reload();
+                    //location.reload();
+                    $('.list-group').append(data);
                 }
             });
         }
-    })
+    });
 });

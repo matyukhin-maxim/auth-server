@@ -67,9 +67,68 @@ class AdminController extends CController {
 
 	public function actionGroup() {
 
-		$this->render('', false);
-		var_dump($this->arguments);
+		$this->render('contents', false);
+		$this->scripts[] = 'admin-group';
+
+		$group_id = filter_var(get_param($this->arguments, 0), FILTER_VALIDATE_INT, [
+			'options' => [
+				'min_range' => 1,
+				'default' => 0,
+			]
+		]);
+
+		// Название группы прочитаем
+		$group = $this->model->getGroupName($group_id);
+		if (empty($group)) {
+			throw new Exception("Запрошенная группа не найдена");
+		}
+
+		if (get_param($this->arguments, 1) === 'delete') {
+			$this->model->saveGroup(get_param($group, 'groupname', '?'), $group_id, 1);
+			if (count($this->model->getErrors())) {
+				$this->preparePopup($this->model->getErrorList());
+			} else	$this->preparePopup('Группа удалена', 'alert-success');
+			
+			$this->redirect('/admin/grouplist/');
+			return;
+		}
+
+		$this->data['group_name'] = get_param($group, 'groupname', '?');
+		$this->data['group_id'] = $group_id;
+
+		// Получим список пользователей, которые привязаны к этой группе
+		$ulist = $this->model->getGroupUsers($group_id);
+		foreach ($ulist as $person) {
+
+			$this->data['plist'] .= CHtml::createTag('li', ['class' => 'list-group-item'],[
+				CHtml::createLink('&times;', '#', [
+					'class' => 'close deluser',
+					'data-group' => $group_id,
+					'data-user' => get_param($person, 'pid'),
+				]),
+				get_param($person, 'fullname'),
+			]);
+		}
+
+		$this->render('group-manage', false);
 		$this->render('');
+	}
+
+	public function actionChangeGroup() {
+
+		$gname      = filter_input(INPUT_POST, 'group-name', FILTER_SANITIZE_STRING);
+		$group_id   = filter_input(INPUT_POST, 'group-id',   FILTER_VALIDATE_INT);
+
+
+		if ($gname && $group_id) {
+			$this->model->saveGroup($gname, $group_id);
+			$elist = CModel::getErrorList();
+			if ($elist) {
+				$this->preparePopup($elist);
+			} else $this->preparePopup('Название групы сохранено.', 'alert-success');
+		}
+
+		$this->redirect(['back' => 1]);
 	}
 
 	public function ajaxFilter() {
@@ -85,7 +144,7 @@ class AdminController extends CController {
 				$link = sprintf('/admin/user/%s/', get_param($person, 'value', 0));
 				echo CHtml::createTag('div', ['class' => 'col-md-4 col-sm-6'],
 					CHtml::createLink(get_param($person, 'label'), $link, [
-						'class' => 'btn btn-default btn-block',
+						'class' => 'btn btn-default btn-lg btn-block',
 					]));
 			}
 		}
@@ -94,8 +153,91 @@ class AdminController extends CController {
 	public function ajaxGroupAdd() {
 
 		$group = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
-		if (!empty($group)) $this->model->saveGroup($group);
 
-		echo CModel::getErrorList();
+		if (empty($group)) return;
+
+		$group_id = $this->model->saveGroup($group);
+
+		if (count($this->model->getErrors())) {
+			$this->preparePopup($this->model->getErrorList());
+		} else {
+			$this->preparePopup('Группа успешно создана', 'alert-success');
+			echo CHtml::createTag('a', [
+				'class' => 'list-group-item',
+				'href' => "/admin/group/$group_id/",
+			], [
+				CHtml::createTag('em', ['class' => 'pull-right'], '0 сотрудник (ов)'),
+				$group,
+			]);
+		}
+	}
+
+	public function ajaxSelection() {
+
+		// Почти тоже самое что и при фильтрации пользователей,
+		// но результаты будем рисовать немного по другому (с чекбоксами)
+
+		$lmodel = new LoginModel();
+		$filter = filter_input(INPUT_POST, 'q', FILTER_SANITIZE_STRING);
+
+		$data = $lmodel->getUsers($filter);
+		if (count($data) == 0)
+			echo CHtml::createTag('div', ['class' => 'alert alert-warning strong'], 'Не найдено');
+		else {
+			foreach ($data as $person) {
+
+				echo CHtml::createTag('div', ['class' => 'col-sm-6'],
+					CHtml::createButton(get_param($person, 'label'),  [
+						'class' => 'btn btn-default btn-block btn-select',
+						'data-user' => get_param($person, 'value'),
+					]));
+			}
+		}
+	}
+
+	public function ajaxAccessoryUser() {
+
+		$data = filter_input_array(INPUT_POST, [
+			'user'  => FILTER_VALIDATE_INT,
+			'group' => [
+				'filter' => FILTER_VALIDATE_INT,
+				'options' => ['min_range' => 1],
+			],
+			'remove' => [
+				'filter' => FILTER_VALIDATE_INT,
+				'options' => [
+					'min_range' => 0,
+					'max_range' => 1,
+					'default' => 0,
+				],
+			],
+		], false);
+
+		$uid = get_param($data, 'user');
+		$gid = get_param($data, 'group');
+		$delete = get_param($data, 'remove', 0);
+
+		if (!($uid && $gid)) {
+			$this->preparePopup('Параметры заданы неверно');
+			return;
+		}
+
+		$person = $this->model->accessoryGroup($uid, $gid, $delete);
+		if (count($this->model->getErrors())) {
+			$this->preparePopup($this->model->getErrorList());
+		} else {
+			// Удачно привязали/отвязали пользователя
+			if ($delete === 0) {
+
+				echo CHtml::createTag('li', ['class' => 'list-group-item'], [
+					CHtml::createLink('&times;', '#', [
+						'class' => 'close deluser',
+						'data-group' => $gid,
+						'data-user' => $uid,
+					]),
+					get_param($person, 'fullname'),
+				]);
+			} else echo 'ok';
+		}
 	}
 }

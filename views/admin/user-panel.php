@@ -1,1 +1,0 @@
-<a href="#" class="col-md-4 btn btn-lg btn-default"><?= $fullname;?></a>

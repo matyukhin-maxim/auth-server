@@ -57,7 +57,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="alert alert-danger col-sm-6 col-sm-offset-3" id="status-footer">
-				<div class="strong" id="status-text"><?= get_param($elist); ?></div>
+														<div class="strong" id="status-text"><?= get_param($elist); ?></div>
 			</div>
 		</div>
 	</div>

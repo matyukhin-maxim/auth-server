@@ -40,6 +40,7 @@ class CController {
 
 	public function render($view, $endpage = true) {
 
+		$this->data['elist'] = CModel::getErrorList();
 		extract($this->data);
 		if (!$this->hprint) {
 			include $this->viewFolder . 'hcommon.php';
@@ -52,7 +53,6 @@ class CController {
 		}
 
 		if ($endpage) {
-			$elist = CModel::getErrorList();
 			include $this->viewFolder . 'fcommon.php';
 		}
 	}
@@ -71,7 +71,7 @@ class CController {
 		return ob_get_clean();
 	}
 
-	public function prepareError($etext, $eclass = 'alert-danger') {
+	public function preparePopup($etext, $eclass = 'alert-danger') {
 		if (!headers_sent() && $etext) {
 			setcookie('status', nl2br($etext), time() + 10, '/');
 			setcookie('class', $eclass, time() + 10, '/');

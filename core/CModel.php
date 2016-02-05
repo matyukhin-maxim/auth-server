@@ -43,9 +43,9 @@ class CModel {
 		return self::$errorlist;
 	}
 
-	public static function getErrorList() {
+	public static function getErrorList($delimiter = '<br/>') {
 
-		return join('<br/>', self::$errorlist);
+		return join($delimiter, self::$errorlist);
 	}
 
 	protected function select($query, $param = array(), &$rowCount = null) {
