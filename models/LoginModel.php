@@ -25,7 +25,7 @@ class LoginModel extends CModel {
         SELECT
           id       value,
           fullname label
-        FROM personal
+        FROM openid.personal
         WHERE $field LIKE :filter
               AND deleted = 0
         ORDER BY fullname
