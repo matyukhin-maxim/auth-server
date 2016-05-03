@@ -30,7 +30,7 @@ $(function () {
         });
 
         // Счетчик пользователей в группе
-        $('#cnt-user').text($('.list-group-item').length);
+        $('#cnt-user').text($('.group-user').length);
     }
 
     var mt = 0;
@@ -58,7 +58,7 @@ $(function () {
                             data: {user: $(this).data('user'), group: $('#gid').val()},
                             success: function(data) {
                                 btn.prop('disabled', true);
-                                $('.list-group').append(data);
+                                $('#group-users').append(data);
                                 $('#selection').focus();
                                 refreshControls();
                             }
@@ -70,6 +70,20 @@ $(function () {
         }, 1000);
     });
 
+    $('.site-link').click(function () {
+        $(this).toggleClass('btn-success');
+    });
+
+    $('#access-save').click(function () {
+
+        var list = $.map($('.site-link.btn-success'), function(link) {return $(link).data('key')});
+        $.ajax({
+            type: 'post',
+            url : '/admin/groupAccess/',
+            data: {sites: list, group: $('#gid').val()},
+            success: function(data) {$('#response').html(data)}
+        });
+    });
 
     refreshControls();
 });

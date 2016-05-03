@@ -302,3 +302,8 @@ textarea.reason {
 a:focus, a:hover {
     outline: none; !important;
 }
+
+.wrapper [class*="col-"] {
+    padding-left: 3px; !important;
+    padding-right: 3px; !important;
+}

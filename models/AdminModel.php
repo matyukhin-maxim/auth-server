@@ -46,7 +46,7 @@ class AdminModel extends CModel {
 
 	public function getGroupName($group_id) {
 
-		$data = $this->select('SELECT id, groupname FROM groups WHERE id = :gid AND deleted = 0', ['gid' => $group_id]);
+		$data = $this->select('SELECT id, groupname, access FROM groups WHERE id = :gid AND deleted = 0', ['gid' => $group_id]);
 		return get_param($data, 0);
 	}
 
@@ -58,7 +58,54 @@ class AdminModel extends CModel {
 			'mark' => $delete,
 		]);
 
-		$response = $this->select('select fullname from personal where id = :uid', ['uid' => $user_id]);
+		$response = $this->select('SELECT fullname FROM personal WHERE id = :uid', ['uid' => $user_id]);
 		return get_param($response, 0);
+	}
+
+	public function getSiteList() {
+
+		return $this->select('SELECT link, sitename, sitekey FROM sites WHERE deleted = 0');
+	}
+
+	public function updateGroupAccess($group, $access) {
+
+		$cnt = 0;
+		$this->select('UPDATE groups SET access = :mask WHERE id = :gid', [
+			'mask' => $access,
+			'gid' => $group,
+		], $cnt);
+
+		return $cnt === 1;
+	}
+
+	public function getUserInformation($uid) {
+
+		$data = $this->select('
+			SELECT p.fullname, ifnull(a.deny, 0) deny
+			FROM personal p
+			LEFT JOIN person_grant a ON a.person_id = p.id
+			WHERE p.id = :uid', ['uid' => $uid]);
+
+		if (!$data) return false;
+
+		$data = get_param($data, 0);
+		$groups = $this->select('
+			SELECT p.group_id, g.groupname, g.access
+			FROM person_group p
+			LEFT JOIN groups g ON g.id = p.group_id
+			WHERE p.deleted = 0
+				AND p.person_id = :uid
+				AND g.deleted = 0', ['uid' => $uid]);
+
+		$data['groups'] = array_column($groups, 'groupname', 'group_id');
+
+		// Считаем доступ к сайтам
+		$access = 0;
+		foreach ($groups as $item) $access |= (int) get_param($item, 'access');
+
+		$deny = (int) get_param($data, 'deny');
+		$data['access'] = $access & (~$deny);
+
+		return $data;
 	}
 }

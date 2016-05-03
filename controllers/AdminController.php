@@ -61,7 +61,24 @@ class AdminController extends CController {
 	public function actionUser() {
 
 		$this->render('', false);
-		var_dump($this->arguments);
+		$uid = filter_var(get_param($this->arguments, 0), FILTER_VALIDATE_INT, [
+			'options' => ['min_range' => 1,	'default' => 0]
+		]);
+
+
+
+		$userInfo = $this->model->getUserInformation($uid);
+		if (!$userInfo) {
+			$this->preparePopup('Информация о сотруднике не найдена');
+			$this->render('');
+			return;
+		}
+
+		$this->data['username'] = get_param($userInfo, 'fullname');
+		$this->render('user-control', false);
+
+		var_dump($userInfo);
+
 		$this->render('');
 	}
 
@@ -71,10 +88,7 @@ class AdminController extends CController {
 		$this->scripts[] = 'admin-group';
 
 		$group_id = filter_var(get_param($this->arguments, 0), FILTER_VALIDATE_INT, [
-			'options' => [
-				'min_range' => 1,
-				'default' => 0,
-			]
+			'options' => ['min_range' => 1,	'default' => 0]
 		]);
 
 		// Название группы прочитаем
@@ -88,7 +102,7 @@ class AdminController extends CController {
 			if (count($this->model->getErrors())) {
 				$this->preparePopup($this->model->getErrorList());
 			} else	$this->preparePopup('Группа удалена', 'alert-success');
-			
+
 			$this->redirect('/admin/grouplist/');
 			return;
 		}
@@ -100,7 +114,7 @@ class AdminController extends CController {
 		$ulist = $this->model->getGroupUsers($group_id);
 		foreach ($ulist as $person) {
 
-			$this->data['plist'] .= CHtml::createTag('li', ['class' => 'list-group-item'],[
+			$this->data['plist'] .= CHtml::createTag('li', ['class' => 'list-group-item group-user'],[
 				CHtml::createLink('&times;', '#', [
 					'class' => 'close deluser',
 					'data-group' => $group_id,
@@ -108,6 +122,18 @@ class AdminController extends CController {
 				]),
 				get_param($person, 'fullname'),
 			]);
+		}
+
+		$access = (int) get_param($group, 'access', []);
+		$sites = $this->model->getSiteList();
+		foreach ($sites as $link) {
+
+			$key = (int) get_param($link, 'sitekey');
+			$granted = ($access & (1 << $key - 1)) > 0;
+			$this->data['siteList'] .= CHtml::createTag('li', [
+				'class' => 'list-group-item site-link ' . ($granted ? 'btn-success' : ''),
+				'data-key' => $key,
+			], get_param($link, 'sitename'));
 		}
 
 		$this->render('group-manage', false);
@@ -188,8 +214,9 @@ class AdminController extends CController {
 
 				echo CHtml::createTag('div', ['class' => 'col-sm-6'],
 					CHtml::createButton(get_param($person, 'label'),  [
-						'class' => 'btn btn-default btn-block btn-select',
+						'class' => 'btn btn-default btn-block btn-select role-name',
 						'data-user' => get_param($person, 'value'),
+						'title' => get_param($person, 'label'),
 					]));
 			}
 		}
@@ -229,7 +256,7 @@ class AdminController extends CController {
 			// Удачно привязали/отвязали пользователя
 			if ($delete === 0) {
 
-				echo CHtml::createTag('li', ['class' => 'list-group-item'], [
+				echo CHtml::createTag('li', ['class' => 'list-group-item group-user'], [
 					CHtml::createLink('&times;', '#', [
 						'class' => 'close deluser',
 						'data-group' => $gid,
@@ -239,5 +266,19 @@ class AdminController extends CController {
 				]);
 			} else echo 'ok';
 		}
+	}
+
+	public function ajaxGroupAccess() {
+
+		$sites = filter_input(INPUT_POST, 'sites', FILTER_VALIDATE_INT, ['flags' => FILTER_REQUIRE_ARRAY]) ?: [];
+		$group = filter_input(INPUT_POST, 'group', FILTER_VALIDATE_INT) ?: -1;
+
+		$access = 0;
+		foreach($sites as $key) $access |= (1 << $key - 1);
+
+		$res = $this->model->updateGroupAccess($group, $access);
+		$this->preparePopup($this->model->getErrorList());
+
+		if ($res) $this->preparePopup('Информация сохранена', 'alert-success');
 	}
 }
