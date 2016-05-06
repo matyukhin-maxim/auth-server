@@ -60,11 +60,13 @@ class AdminController extends CController {
 
 	public function actionUser() {
 
-		$this->render('', false);
+		$this->render('contents', false);
+		$this->scripts[] = 'user-manage';
+		$this->title = 'Редактор пользователя';
+
 		$uid = filter_var(get_param($this->arguments, 0), FILTER_VALIDATE_INT, [
 			'options' => ['min_range' => 1,	'default' => 0]
 		]);
-
 
 
 		$userInfo = $this->model->getUserInformation($uid);
@@ -75,10 +77,47 @@ class AdminController extends CController {
 		}
 
 		$this->data['username'] = get_param($userInfo, 'fullname');
+
+		$options = '';
+		$groups = $this->model->getGroups();
+		$memberOf = $userInfo['groups'];
+		foreach ($groups as $group) {
+
+			$gid = get_param($group, 'id');
+			$options .= CHtml::createTag('li', [
+				'class' => 'list-group-item btn group' . (array_key_exists($gid, $memberOf) ? ' active' : ''),
+				'data-access' => get_param($group, 'access'),
+			], get_param($group, 'groupname'));
+		}
+
+		$this->data['tabNumber'] = $uid;
+		$this->data['userGroups'] = $options;
+
+		$deny = intval(get_param($userInfo, 'deny'));
+		$block = get_param($userInfo, 'deleted');
+		$block = is_null($block) ? 1 : $block;
+
+		$this->data['buttonBlock'] = CHtml::createTag('a', [
+			'class' => 'btn btn-default strong',
+			'href'  => $block ? "/admin/unblockUser/$uid/" : "/admin/blockUser/$uid/",
+		], $block ? 'Разблокировать' : 'Заблокировать');
+
+		$sites = $this->model->getSiteList();
+		foreach ($sites as $link) {
+
+			$class = 'site col-xs-3 btn';
+			$siteKey = intval(get_param($link, 'sitekey'));
+			if ((1 << $siteKey) & $deny) $class .= ' block';
+
+			$this->data['siteList'] .= CHtml::createButton(get_param($link, 'sitename'), [
+				'class' => $class,
+				'data-key' => $siteKey,
+			]);
+		}
+
+		//var_dump($userInfo);
+
 		$this->render('user-control', false);
-
-		var_dump($userInfo);
-
 		$this->render('');
 	}
 
@@ -128,8 +167,9 @@ class AdminController extends CController {
 		$sites = $this->model->getSiteList();
 		foreach ($sites as $link) {
 
-			$key = (int) get_param($link, 'sitekey');
-			$granted = ($access & (1 << $key - 1)) > 0;
+			$key = intval(get_param($link, 'sitekey'));
+			$key = $key > 32 ? 32 : $key;
+			$granted = ($access & (1 << $key)) > 0;
 			$this->data['siteList'] .= CHtml::createTag('li', [
 				'class' => 'list-group-item site-link ' . ($granted ? 'btn-success' : ''),
 				'data-key' => $key,
@@ -144,7 +184,6 @@ class AdminController extends CController {
 
 		$gname      = filter_input(INPUT_POST, 'group-name', FILTER_SANITIZE_STRING);
 		$group_id   = filter_input(INPUT_POST, 'group-id',   FILTER_VALIDATE_INT);
-
 
 		if ($gname && $group_id) {
 			$this->model->saveGroup($gname, $group_id);
@@ -274,11 +313,61 @@ class AdminController extends CController {
 		$group = filter_input(INPUT_POST, 'group', FILTER_VALIDATE_INT) ?: -1;
 
 		$access = 0;
-		foreach($sites as $key) $access |= (1 << $key - 1);
+		foreach($sites as $key) $access |= (1 << $key);
 
 		$res = $this->model->updateGroupAccess($group, $access);
 		$this->preparePopup($this->model->getErrorList());
 
 		if ($res) $this->preparePopup('Информация сохранена', 'alert-success');
+	}
+
+	public function actionBlockUser() {
+
+		$uid = filter_var(get_param($this->arguments, 0), FILTER_VALIDATE_INT, [
+			'options' => ['min_range' => 1,	'default' => 0]
+		]);
+
+
+		$userInfo = $this->model->getUserInformation($uid);
+		if (!$userInfo) {
+			$this->preparePopup('Информация о сотруднике не найдена');
+			$this->redirect(['back' => 1]);
+			return;
+		}
+
+		$password = get_param($userInfo, 'pw');
+		$deny = get_param($userInfo, 'deny');
+		$block = get_param($userInfo. 'deleted');
+
+		$res = $this->model->setUserGrants($uid, $password, $deny, 1);
+		if ($res) $this->preparePopup('Пользователь заблокирован', 'alert-warning');
+		else $this->preparePopup($this->model->getErrorList());
+
+		$this->redirect(['back' => 1]);
+	}
+
+	public function actionUnblockUser() {
+
+		$uid = filter_var(get_param($this->arguments, 0), FILTER_VALIDATE_INT, [
+			'options' => ['min_range' => 1,	'default' => 0]
+		]);
+
+
+		$userInfo = $this->model->getUserInformation($uid);
+		if (!$userInfo) {
+			$this->preparePopup('Информация о сотруднике не найдена');
+			$this->redirect(['back' => 1]);
+			return;
+		}
+
+		$password = get_param($userInfo, 'pw');
+		$deny = get_param($userInfo, 'deny');
+		$block = get_param($userInfo. 'deleted');
+
+		$res = $this->model->setUserGrants($uid, $password, $deny, 0);
+		if ($res) $this->preparePopup('Пользователь разблокирован', 'alert-success');
+		else $this->preparePopup($this->model->getErrorList());
+
+		$this->redirect(['back' => 1]);
 	}
 }

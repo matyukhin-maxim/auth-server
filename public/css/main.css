@@ -307,3 +307,12 @@ a:focus, a:hover {
     padding-left: 3px; !important;
     padding-right: 3px; !important;
 }
+
+.alert input.form-control {
+
+    background: transparent;
+}
+
+.italic {
+    font-style: italic;
+}

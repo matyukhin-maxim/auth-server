@@ -11,11 +11,11 @@ class AdminModel extends CModel {
 	public function getGroups() {
 
 		$data = $this->select('
-		SELECT g.id, g.groupname, count(pg.person_id) cnt
+		SELECT g.id, g.groupname, g.access, count(pg.person_id) cnt
 		FROM groups g
 		LEFT JOIN person_group pg ON pg.group_id = g.id AND pg.deleted = 0
 		WHERE g.deleted = 0
-		GROUP BY 1, 2');
+		GROUP BY 1, 2, 3');
 
 		return $data;
 	}
@@ -81,7 +81,7 @@ class AdminModel extends CModel {
 	public function getUserInformation($uid) {
 
 		$data = $this->select('
-			SELECT p.fullname, ifnull(a.deny, 0) deny
+			SELECT p.fullname, a.deny, a.deleted, a.pwdhash pw
 			FROM personal p
 			LEFT JOIN person_grant a ON a.person_id = p.id
 			WHERE p.id = :uid', ['uid' => $uid]);
@@ -101,11 +101,25 @@ class AdminModel extends CModel {
 
 		// Считаем доступ к сайтам
 		$access = 0;
-		foreach ($groups as $item) $access |= (int) get_param($item, 'access');
+		foreach ($groups as $item) $access |= (int)get_param($item, 'access');
 
-		$deny = (int) get_param($data, 'deny');
-		$data['access'] = $access & (~$deny);
+		$data['grants'] = $access;
 
+		//$deny = (int) get_param($data, 'deny');
+		//$data['access'] = $access & (~$deny);
 		return $data;
+	}
+
+	public function setUserGrants($uid, $password, $deny, $block) {
+
+		$cnt = 0;
+		$this->select('REPLACE INTO person_grant (person_id, pwdhash, deny, deleted) VALUES (:pid, :pass, :deny, :block)', [
+			'pid' => $uid,
+			'pass' => $password,
+			'deny' => $deny,
+			'block' => $block,
+		], $cnt);
+
+		return $cnt > 0;
 	}
 }

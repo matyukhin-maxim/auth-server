@@ -10,6 +10,9 @@ $(function () {
             data : {q: $('#filter').val()},
             success: function(data) {
                 $('.panel-response').html(data);
+
+                // Если найден только один сотрудник, то сразу откроем его карточку
+                if ($('.panel-response a').length === 1) $('.panel-response a')[0].click();
             }
         });
     }

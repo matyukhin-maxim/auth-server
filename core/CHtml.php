@@ -42,8 +42,9 @@ class CHtml {
 		return self::createTag('a', $options, $text);
 	}
 
-	public static function createOption($title, $value, $options = null) {
+	public static function createOption($title, $value, $selected = null, $options = null) {
 		$options['value'] = $value;
+		if ($selected) $options['selected'] = true;
 
 		return self::createTag('option', $options, $title);
 	}
