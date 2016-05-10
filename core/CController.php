@@ -107,8 +107,14 @@ class CController {
 		}
 	}
 
-	public function createActionUrl($pAction) {
-		return sprintf("/%s/%s/", strtolower($this->classname), $pAction);
+	public function createActionUrl($pAction, $args = null) {
+
+		$params = '';
+
+		if ($args && !is_array($args)) $args = array($args);
+		if (count($args)) $params = join('/', $args) . '/';
+
+		return sprintf("/%s/%s/%s", strtolower($this->classname), $pAction, $params);
 	}
 
 	// абстракции просто чтоб были (переопределяются в потомках)
