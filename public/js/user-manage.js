@@ -38,5 +38,18 @@ $(function () {
         calcAccess();
     });
 
+    $('#btn-save').click(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: 'post',
+            url : '/admin/saveUser/',
+            data: {
+                uid : $('#uid').val(),
+                deny: deny,
+                access: $('.group.active').map(function (id, g) {return $(g).data('id')}).toArray()},
+        });
+    });
+
     calcAccess();
 });

@@ -122,4 +122,24 @@ class AdminModel extends CModel {
 
 		return $cnt > 0;
 	}
+
+	public function deleteUser($uid) {
+
+		$cnt = 0;
+		$this->select('UPDATE personal SET deleted = 1 WHERE id = :uid', ['uid' => $uid], $cnt);
+
+		return $cnt > 0;
+	}
+
+	public function accessoryUser($user, $groups) {
+
+		$this->select('UPDATE person_group SET deleted = 1 WHERE person_id = :uid', ['uid' => $user]);
+		foreach ($groups as $group)
+			$this->select('replace into person_group (person_id, group_id) VALUES (:uid, :gid)', [
+				'uid' => $user,
+				'gid' => $group,
+			]);
+
+		return count($this->getErrors()) === 0;
+	}
 }

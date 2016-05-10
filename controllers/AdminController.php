@@ -7,13 +7,15 @@
  * Time: 11:34
  */
 
-/** @property AdminModel $model*/
+/** @property AdminModel $model */
 class AdminController extends CController {
 
 	public function __construct() {
 		parent::__construct();
 
 		$this->scripts[] = 'administration';
+		$this->data['extra'] = '';
+		$this->data['btnList'] = '';
 	}
 
 	public function actionIndex() {
@@ -65,7 +67,7 @@ class AdminController extends CController {
 		$this->title = 'Редактор пользователя';
 
 		$uid = filter_var(get_param($this->arguments, 0), FILTER_VALIDATE_INT, [
-			'options' => ['min_range' => 1,	'default' => 0]
+			'options' => ['min_range' => 1, 'default' => 0]
 		]);
 
 
@@ -87,6 +89,7 @@ class AdminController extends CController {
 			$options .= CHtml::createTag('li', [
 				'class' => 'list-group-item btn group' . (array_key_exists($gid, $memberOf) ? ' active' : ''),
 				'data-access' => get_param($group, 'access'),
+				'data-id' => $gid,
 			], get_param($group, 'groupname'));
 		}
 
@@ -96,11 +99,27 @@ class AdminController extends CController {
 		$deny = intval(get_param($userInfo, 'deny'));
 		$block = get_param($userInfo, 'deleted');
 		$block = is_null($block) ? 1 : $block;
+		if ($block) $this->data['extra'] = '* Пользователь заблокирован';
 
-		$this->data['buttonBlock'] = CHtml::createTag('a', [
+		// Кнопки в футере ( управление пользователем )
+		$this->data['btnList'] .= CHtml::createLink('Удалить пользователя',
+			$this->createActionUrl('deleteUser', $this->arguments), [
+				'class' => 'btn btn-danger strong',
+				'title' => 'Удаление пользователя из всех списков',
+				'onclick' => "return confirm('Уверены ???');",
+			]);
+
+		$this->data['btnList'] .= CHtml::createTag('a', [
 			'class' => 'btn btn-default strong',
-			'href'  => $block ? "/admin/unblockUser/$uid/" : "/admin/blockUser/$uid/",
+			'href' => $this->createActionUrl($block ? 'unblockUser' : 'blockUser', $this->arguments),
+			'title' => 'Блокировка авторизации.',
 		], $block ? 'Разблокировать' : 'Заблокировать');
+
+		$this->data['btnList'] .= CHtml::createLink('Сбросить пароль', $this->createActionUrl('flushPassword', $this->arguments), [
+			'class' => 'btn btn-default italic',
+			'title' => 'Сброс пароля на стандартный ( 123 )',
+		]);
+
 
 		$sites = $this->model->getSiteList();
 		foreach ($sites as $link) {
@@ -115,8 +134,6 @@ class AdminController extends CController {
 			]);
 		}
 
-		//var_dump($userInfo);
-
 		$this->render('user-control', false);
 		$this->render('');
 	}
@@ -127,7 +144,7 @@ class AdminController extends CController {
 		$this->scripts[] = 'admin-group';
 
 		$group_id = filter_var(get_param($this->arguments, 0), FILTER_VALIDATE_INT, [
-			'options' => ['min_range' => 1,	'default' => 0]
+			'options' => ['min_range' => 1, 'default' => 0]
 		]);
 
 		// Название группы прочитаем
@@ -140,7 +157,7 @@ class AdminController extends CController {
 			$this->model->saveGroup(get_param($group, 'groupname', '?'), $group_id, 1);
 			if (count($this->model->getErrors())) {
 				$this->preparePopup($this->model->getErrorList());
-			} else	$this->preparePopup('Группа удалена', 'alert-success');
+			} else    $this->preparePopup('Группа удалена', 'alert-success');
 
 			$this->redirect('/admin/grouplist/');
 			return;
@@ -153,7 +170,7 @@ class AdminController extends CController {
 		$ulist = $this->model->getGroupUsers($group_id);
 		foreach ($ulist as $person) {
 
-			$this->data['plist'] .= CHtml::createTag('li', ['class' => 'list-group-item group-user'],[
+			$this->data['plist'] .= CHtml::createTag('li', ['class' => 'list-group-item group-user'], [
 				CHtml::createLink('&times;', '#', [
 					'class' => 'close deluser',
 					'data-group' => $group_id,
@@ -163,7 +180,7 @@ class AdminController extends CController {
 			]);
 		}
 
-		$access = (int) get_param($group, 'access', []);
+		$access = (int)get_param($group, 'access', []);
 		$sites = $this->model->getSiteList();
 		foreach ($sites as $link) {
 
@@ -182,8 +199,8 @@ class AdminController extends CController {
 
 	public function actionChangeGroup() {
 
-		$gname      = filter_input(INPUT_POST, 'group-name', FILTER_SANITIZE_STRING);
-		$group_id   = filter_input(INPUT_POST, 'group-id',   FILTER_VALIDATE_INT);
+		$gname = filter_input(INPUT_POST, 'group-name', FILTER_SANITIZE_STRING);
+		$group_id = filter_input(INPUT_POST, 'group-id', FILTER_VALIDATE_INT);
 
 		if ($gname && $group_id) {
 			$this->model->saveGroup($gname, $group_id);
@@ -252,7 +269,7 @@ class AdminController extends CController {
 			foreach ($data as $person) {
 
 				echo CHtml::createTag('div', ['class' => 'col-sm-6'],
-					CHtml::createButton(get_param($person, 'label'),  [
+					CHtml::createButton(get_param($person, 'label'), [
 						'class' => 'btn btn-default btn-block btn-select role-name',
 						'data-user' => get_param($person, 'value'),
 						'title' => get_param($person, 'label'),
@@ -264,7 +281,7 @@ class AdminController extends CController {
 	public function ajaxAccessoryUser() {
 
 		$data = filter_input_array(INPUT_POST, [
-			'user'  => FILTER_VALIDATE_INT,
+			'user' => FILTER_VALIDATE_INT,
 			'group' => [
 				'filter' => FILTER_VALIDATE_INT,
 				'options' => ['min_range' => 1],
@@ -313,7 +330,7 @@ class AdminController extends CController {
 		$group = filter_input(INPUT_POST, 'group', FILTER_VALIDATE_INT) ?: -1;
 
 		$access = 0;
-		foreach($sites as $key) $access |= (1 << $key);
+		foreach ($sites as $key) $access |= (1 << $key);
 
 		$res = $this->model->updateGroupAccess($group, $access);
 		$this->preparePopup($this->model->getErrorList());
@@ -324,7 +341,7 @@ class AdminController extends CController {
 	public function actionBlockUser() {
 
 		$uid = filter_var(get_param($this->arguments, 0), FILTER_VALIDATE_INT, [
-			'options' => ['min_range' => 1,	'default' => 0]
+			'options' => ['min_range' => 1, 'default' => 0]
 		]);
 
 
@@ -337,9 +354,9 @@ class AdminController extends CController {
 
 		$password = get_param($userInfo, 'pw');
 		$deny = get_param($userInfo, 'deny');
-		$block = get_param($userInfo. 'deleted');
+		$block = 1; //get_param($userInfo . 'deleted');
 
-		$res = $this->model->setUserGrants($uid, $password, $deny, 1);
+		$res = $this->model->setUserGrants($uid, $password, $deny, $block);
 		if ($res) $this->preparePopup('Пользователь заблокирован', 'alert-warning');
 		else $this->preparePopup($this->model->getErrorList());
 
@@ -349,7 +366,7 @@ class AdminController extends CController {
 	public function actionUnblockUser() {
 
 		$uid = filter_var(get_param($this->arguments, 0), FILTER_VALIDATE_INT, [
-			'options' => ['min_range' => 1,	'default' => 0]
+			'options' => ['min_range' => 1, 'default' => 0]
 		]);
 
 
@@ -360,14 +377,78 @@ class AdminController extends CController {
 			return;
 		}
 
-		$password = get_param($userInfo, 'pw');
-		$deny = get_param($userInfo, 'deny');
-		$block = get_param($userInfo. 'deleted');
+		$password = get_param($userInfo, 'pw') ?: sha1('123');
+		$deny = get_param($userInfo, 'deny') ?: 0;
+		$block = 0; //get_param($userInfo . 'deleted');
 
-		$res = $this->model->setUserGrants($uid, $password, $deny, 0);
+		$res = $this->model->setUserGrants($uid, $password, $deny, $block);
 		if ($res) $this->preparePopup('Пользователь разблокирован', 'alert-success');
 		else $this->preparePopup($this->model->getErrorList());
 
 		$this->redirect(['back' => 1]);
+	}
+
+	public function actionFlushPassword() {
+
+		$uid = filter_var(get_param($this->arguments, 0), FILTER_VALIDATE_INT) ?: 0;
+		$info = $this->model->getUserInformation($uid);
+
+		if (!$info) {
+			$this->preparePopup('Информация о сотруднике не найдена');
+			$this->redirect(['back' => 1]);
+			return;
+		}
+
+		$password = sha1('123'); //get_param($userInfo, 'pw')
+		$deny = get_param($info, 'deny') ?: 0;
+		$block = get_param($info . 'deleted') ?: 1;
+
+		$res = $this->model->setUserGrants($uid, $password, $deny, $block);
+		if ($res) $this->preparePopup('Пользователю установлен стандартный пароль', 'alert-info');
+		else $this->preparePopup($this->model->getErrorList());
+
+		$this->redirect(['back' => 1]);
+	}
+
+	public function actionDeleteUser() {
+
+		$uid = filter_var(get_param($this->arguments, 0), FILTER_VALIDATE_INT) ?: 0;
+		$info = $this->model->getUserInformation($uid);
+
+		if (!$info) {
+			$this->preparePopup('Информация о сотруднике не найдена');
+			$this->redirect(['back' => 1]);
+			return;
+		}
+
+		$res = $this->model->deleteUser($uid);
+		if ($res) $this->preparePopup('Пользователь удален', 'alert-warning');
+		else $this->preparePopup($this->model->getErrorList());
+
+		// Переходим на главную страницу админки
+		$this->redirect($this->createActionUrl(''));
+	}
+
+	public function ajaxSaveUser() {
+
+		$deny = filter_input(INPUT_POST, 'deny', FILTER_VALIDATE_INT) ?: 0;
+		$grant = filter_input(INPUT_POST, 'access', FILTER_VALIDATE_INT, ['flags' => FILTER_REQUIRE_ARRAY]) ?: [];
+		$user  = filter_input(INPUT_POST, 'uid', FILTER_VALIDATE_INT) ?: 0;
+
+		$info = $this->model->getUserInformation($user);
+		if (!$info) return $this->preparePopup('Запрашиваемый пользователь не найден');
+
+		$pw = get_param($info, 'pw') ?: sha1('123');
+		$block = get_param($info, 'deleted');
+		$block = is_null($block) ? 1 : $block;
+		// Запишщем заблокированные сайты
+		$this->model->setUserGrants($user, $pw, $deny, $block);
+
+		// Привяжем сотрудника к выбранным группам (предварительно сбросив все)
+		$this->model->accessoryUser($user, $grant);
+		$this->preparePopup('Данные сохранены', 'alert-info');
+
+		// если были ошбки mysql, то статус перезапишется
+		return $this->preparePopup($this->model->getErrorList());
 	}
 }

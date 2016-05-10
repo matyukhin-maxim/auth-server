@@ -8,7 +8,10 @@
 
 <div class="row">
 	<div class="panel panel-default">
-		<div class="panel-heading strong">Рдактирование профиля сотрудника</div>
+		<div class="panel-heading strong">
+			<div class="pull-right text-danger italic"><?= $extra;?></div>
+			Рдактирование профиля сотрудника
+		</div>
 		<div class="panel-body">
 			<div class="clearfix">
 				<div class="col-md-4 text-center">
@@ -29,6 +32,7 @@
 							<div class="col-sm-4 text-right control-label">Табельный номер сотрудника</div>
 							<div class="col-sm-8 strong">
 								<input type="text" class="form-control" disabled value="<?= $tabNumber; ?>">
+								<input id="uid" type="hidden" value="<?= $tabNumber; ?>">
 							</div>
 						</div>
 					</div>
@@ -47,13 +51,11 @@
 		<div class="panel-footer clearfix">
 			<div class="pull-left">
 				<div class="btn-group">
-					<button class="btn btn-danger strong" type="button">Удалить пользовтаеля</button>
-					<?= $buttonBlock;?>
-					<button class="btn btn-default" type="button">Сбросить пароль</button>
+					<?= $btnList;?>
 				</div>
 			</div>
 			<div class="pull-right">
-				<button class="btn btn-primary strong" type="submit">Сохранить</button>
+				<button id="btn-save" class="btn btn-primary strong" type="submit">Сохранить</button>
 				<a href="/admin/userlist/" class="btn btn-default">Закрыть</a>
 			</div>
 		</div>
