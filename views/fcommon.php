@@ -11,7 +11,7 @@
 	</div>
 	<div class="container">
 		<div class="row">
-			<div class=" col-xs-12 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4 col-lg-2 col-lg-offset-5"
+			<div class=" col-xs-12 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4 col-lg-3 col-lg-offset-5"
 			     id="info-block">
 				<div class="alert alert-info">
 					<div class="row">

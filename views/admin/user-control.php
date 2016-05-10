@@ -25,7 +25,7 @@
 						<div class="row">
 							<div class="col-sm-4 text-right control-label">Полное имя сотрудника</div>
 							<div class="col-sm-8 strong">
-								<input name="uname" type="text" class="form-control" value="<?= $username; ?>">
+								<input disabled type="text" class="form-control" value="<?= $username; ?>">
 							</div>
 						</div>
 						<div class="row">

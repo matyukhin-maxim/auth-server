@@ -316,3 +316,7 @@ a:focus, a:hover {
 .italic {
     font-style: italic;
 }
+
+a.btn-default {
+    background: none;
+}
