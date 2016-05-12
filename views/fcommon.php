@@ -11,7 +11,7 @@
 	</div>
 	<div class="container">
 		<div class="row">
-			<div class=" col-xs-12 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4 col-lg-3 col-lg-offset-5"
+			<div class=" col-xs-12 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4"
 			     id="info-block">
 				<div class="alert alert-info">
 					<div class="row">
@@ -57,11 +57,18 @@
 	<div class="container">
 		<div class="row">
 			<div class="alert alert-danger col-sm-6 col-sm-offset-3" id="status-footer">
-														<div class="strong" id="status-text"><?= get_param($elist); ?></div>
+				<div class="strong" id="status-text"><?= get_param($elist); ?></div>
 			</div>
 		</div>
 	</div>
 </footer>
+
+<div class="modal fade" id="universal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static"
+     data--keyboard="false">
+	<div class="modal-dialog modal-dialog-center">
+		<div class="modal-content"></div>
+	</div>
+</div>
 
 <?php foreach ($this->scripts as $filename) {
 	if (file_exists("./public/js/$filename.js"))

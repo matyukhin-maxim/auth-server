@@ -320,3 +320,7 @@ a:focus, a:hover {
 a.btn-default {
     background: none;
 }
+
+.modal-dialog-center {
+    margin-top: 15%;
+}

@@ -10,7 +10,9 @@
 					       placeholder="Фильтр по фамилии сотрудника..." id="filter"/>
 				</div>
 			</div>
-			<div class="panel-body panel-response"></div>
+			<div class="panel-body panel-response">
+				<div class="alert alert-warning strong">Введите несколько букв фамилии сотрудника...</div>
+			</div>
 		</div>
 	</div>
 </div>

@@ -5,8 +5,7 @@
 				<div class="btn-group btn-group-justified">
 					<a href="/admin/userlist/" class="btn btn-default strong">Пользователи</a>
 					<a href="/admin/grouplist/" class="btn btn-default strong">Группы</a>
-					<a href="#" class="btn btn-default strong">Сайты</a>
-					<a href="#" class="btn btn-default strong">Доступ</a>
+					<a href="/admin/sitelist/" class="btn btn-default strong">Сайты</a>
 				</div>
 			</div>
 		</div>

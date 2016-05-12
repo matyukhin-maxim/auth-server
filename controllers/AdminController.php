@@ -50,11 +50,6 @@ class AdminController extends CController {
 		$this->render('group-list');
 	}
 
-	public function actionSites() {
-
-		$this->render('');
-	}
-
 	public function actionGrants() {
 
 		$this->render('');
@@ -450,5 +445,108 @@ class AdminController extends CController {
 
 		// если были ошбки mysql, то статус перезапишется
 		return $this->preparePopup($this->model->getErrorList());
+	}
+
+	public function actionSiteList() {
+
+		$sites = $this->model->getSiteList();
+		$this->render('contents', false);
+
+		//var_dump($sites);
+		$this->data['list'] = '';
+		foreach ($sites as $link) {
+
+			$address = get_param($link, 'link');
+
+			$this->data['s_title'] = get_param($link, 'sitename');
+			$this->data['siteLink'] = $address;
+			$this->data['editLink'] = $this->createActionUrl('siteEdit', get_param($link, 'id'));
+			$this->data['deleteLink'] = $this->createActionUrl('siteDelete', get_param($link, 'id'));
+			$this->data['list'] .= $this->renderPartial('site-row');
+		}
+
+		$this->render('site-list');
+	}
+
+	public function ajaxSiteEdit() {
+
+		$sid = get_param($this->arguments, 0, 0);
+		$this->data['modal_title'] = $sid ? 'Редактирование информации' : 'Создание новой ссылки';
+
+		$info = $this->model->getSiteInfo($sid);
+
+		$this->data['s_title'] = get_param($info, 'sitename');
+		$this->data['s_key'] = get_param($info, 'sitekey');
+		$this->data['s_link'] = get_param($info, 'link');
+		$this->data['sid'] = get_param($info, 'id') ?: null;
+
+		echo $this->renderPartial('modal-site');
+	}
+
+	public function actionSiteSave() {
+
+		$args = filter_input_array(INPUT_POST, [
+			's_title' => FILTER_SANITIZE_STRING,
+			's_key' => [
+				'filter' => FILTER_VALIDATE_INT,
+				'options' => [
+					'min_range' => 0,
+					'max_range' => 31,
+					'default' => 0,
+				],
+			],
+			's_link' => FILTER_VALIDATE_URL,
+			'sid' => FILTER_VALIDATE_INT,
+		]);
+
+		$args['del'] = 0;
+		$args['s_link'] = $args['s_link'] ?: 'http://wtf.asu.ngres/';
+
+		// Проверку на повтор индекса будем делать тут,
+		// т.к. на уровне БД сделать это не получилось
+		// ( дублируемая запись затирается )
+
+		$list = $this->model->getSiteList();
+
+		$exist = false;
+		foreach ($list as $site) {
+
+			// если id проверяемого отличается от текущего
+			if (get_param($args, 'sid') !== intval(get_param($site, 'id'))) {
+				$exist |= get_param($args, 's_key') === intval(get_param($site, 'sitekey'));
+			}
+		}
+
+		if (!$exist) {
+
+			$this->model->editSite($args);
+			$this->preparePopup('Информация сохранена', 'alert-success');
+			$this->preparePopup($this->model->getErrorList());
+		} else $this->preparePopup('Указанный индекс сайта занят');
+
+
+		$this->redirect($this->createActionUrl('sitelist'));
+	}
+
+	public function actionSiteDelete() {
+
+		$sid = filter_var(get_param($this->arguments, 0), FILTER_VALIDATE_INT) ?: -1;
+		$info = $this->model->getSiteInfo($sid);
+		if (!$info) $this->preparePopup('Нет информации по выбранному сайту');
+		else {
+
+			$args = [
+				'sid' => $sid,
+				's_title' => get_param($info, 'sitename'),
+				's_key' => get_param($info, 'sitekey'),
+				's_link' => get_param($info, 'link'),
+				'del' => 1,
+			];
+			$this->model->editSite($args);
+			$this->preparePopup('Сайт удален', 'alert-warning');
+			$this->preparePopup($this->model->getErrorList());
+		}
+
+		$this->redirect(['back' => 1]);
 	}
 }

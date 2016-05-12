@@ -54,12 +54,21 @@ $(function() {
     });
 
     // подсказки для кнопок, текст которых может свернуться на мелких экранах
-    $('.btn-group-justified .btn').each(function () {
-        var self = $(this);
-        self.attr('title', $.trim(self.text()));
-    });
+    //$('.btn-group-justified .btn').each(function () {
+    //    var self = $(this);
+    //    self.attr('title', $.trim(self.text()));
+    //});
 
     $('[data-toggle="popover"]').popover();
+
+    $('.modal').on('hide.bs.modal', function (e) {
+        $(this).removeData('bs.modal');
+    });
+
+    $('.disabled').click(function (e) {
+        e.preventDefault();
+        return false;
+    });
 
     showPopup();
 });

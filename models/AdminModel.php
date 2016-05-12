@@ -64,7 +64,7 @@ class AdminModel extends CModel {
 
 	public function getSiteList() {
 
-		return $this->select('SELECT link, sitename, sitekey FROM sites WHERE deleted = 0');
+		return $this->select('SELECT id, link, sitename, sitekey FROM sites WHERE deleted = 0');
 	}
 
 	public function updateGroupAccess($group, $access) {
@@ -135,11 +135,26 @@ class AdminModel extends CModel {
 
 		$this->select('UPDATE person_group SET deleted = 1 WHERE person_id = :uid', ['uid' => $user]);
 		foreach ($groups as $group)
-			$this->select('replace into person_group (person_id, group_id) VALUES (:uid, :gid)', [
+			$this->select('REPLACE INTO person_group (person_id, group_id) VALUES (:uid, :gid)', [
 				'uid' => $user,
 				'gid' => $group,
 			]);
 
 		return count($this->getErrors()) === 0;
+	}
+
+	public function getSiteInfo($site_id) {
+
+		$res = $this->select('SELECT * FROM sites WHERE id = :sid AND deleted = 0', ['sid' => $site_id]);
+		return get_param($res, 0, []);
+	}
+
+	public function editSite($args) {
+
+		$cnt = 0;
+		$this->select('REPLACE INTO sites (id, sitekey, sitename, link, deleted) VALUES
+			(:sid, :s_key, :s_title, :s_link, :del)', $args, $cnt);
+
+		return $cnt > 0;
 	}
 }
