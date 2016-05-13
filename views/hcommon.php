@@ -15,6 +15,7 @@
 	<!--[if lt IE 9]>
 	<script src="/public/js/lib/html5shiv.min.js"></script>
 	<script src="/public/js/lib/respond.min.js"></script>
+	<script src="/public/js/lib/es5-shim.js"></script>
 	<![endif]-->
 </head>
 <body>
@@ -43,7 +44,7 @@
 				<li class="dropdown last-menu-item">
 					<a class="dropdown-toggle" data-toggle="dropdown" href="#">
 						<i class="glyphicon glyphicon-user"></i>
-						<?= get_param($authdata, 'login', 'n/a'); ?>
+						<?= get_param($authdata, 'fullname', 'n/a'); ?>
 						<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu dropdown-user">

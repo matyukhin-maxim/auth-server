@@ -5,9 +5,7 @@
 $(function () {
     var ua = navigator.userAgent;
     var rx = new RegExp('MSIE [0-9]');
-    if (!rx.test(ua)) {
-        $('label').hide();
-    }
+    if (!rx.test(ua)) $('.control-label').hide();
 
     $('#user-field').autocomplete({
         delay: 500,
@@ -33,7 +31,7 @@ $(function () {
             $('#user-id').val('');
 
             if (ui.content.length === 0) {
-                showPopup('Пользователь не найден. Проверьте правильность ввода');
+                //showPopup('Пользователь не найден. Проверьте правильность ввода');
                 $(this).val('');
             }
             // автозавершение ввода, если в списке "живого поиска" остался только один вариант
@@ -57,7 +55,7 @@ $(function () {
     $('#btn-login').click(function (e) {
         e.preventDefault();
         if ($('#user-id').val().length === 0) {
-            showPopup('Ползователь не указан.');
+            showPopup('Пользователь не указан.');
             $('#login-form').trigger('reset');
             return false;
         }
@@ -67,7 +65,8 @@ $(function () {
             type: 'post',
             data: $('#login-form').serialize(),
             success: function(data) {
-                data.length ? $('#response').html(data) : showPopup();
+                if (data.length) window.location = '/sites/';
+                $('input[type="password"]').focus().val('');
             }
         });
     });

@@ -7,53 +7,73 @@
  * Time: 20:51
  */
 
-function e_code($line) {
-
-	$line = trim(mb_convert_encoding($line, 'windows-1251', 'utf-8'));
-
-	$result = '';
-	for ($cnt = 0; $cnt < strlen($line); $cnt++) {
-		$result .= dechex(ord($line[$cnt])) . ' ';//(($w[$cnt])) .'-';
-	}
-
-	charsetChange($result);
-	//$result = strtoupper($result);
-	echo $result . "<br/>";
-}
-
-function d_code($line) {
-
-	$line = trim(mb_convert_encoding($line, 'windows-1251', 'utf-8'));
-
-	$words = preg_split('/\s+/', $line);
-
-	$line = '';
-	foreach ($words as $w) {
-		$line .= chr(hexdec($w));
-	}
-
-	charsetChange($line);
-	echo str_replace(' ', '&nbsp;', $line) . "<br/>";
-}
-
+/** @property SitesModel $model */
 class SitesController extends CController {
 
 	public function actionIndex() {
 
-		//if (!$this->authdata) $this->redirect('/login/');
-		$this->scripts[] = 'esteregg';
+		$this->render('', false);
+
+		$uid = get_param($this->authdata, 'id');
+
+		// Если не авторизованы то идет лесом
+		if (!$uid) $this->redirect('/login/');
+
+
+		// иначе получим список доступных ему сайтов, и нарисуем ссылки на них
+		$sites = $this->model->getGrantedSites($uid);
+
+		$this->render('', false);
+		if (count($sites) === 0) {
+
+			$this->render('no-sites');
+			return;
+		}
+
+		$this->data['siteList'] = '';
+
+		//$req = curl_init();
+
+		foreach ($sites as $item) {
+
+			$link = get_param($item, 'link');
+
+			$this->data['siteList'] .= CHtml::createTag('form', [
+				'action' => $link . 'auth/openid/',
+				//'target' => '_blank',
+				'method' => 'post',
+			], [
+				CHtml::createTag('input', ['type' => 'hidden', 'name' => 'uid', 'value' => $uid]),
+				CHtml::createTag('input', ['type' => 'hidden', 'name' => 'data', 'value' => get_param($this->authdata, 'fullname')]),
+				CHtml::createButton(get_param($item, 'sitename'), ['type' => 'submit',
+					'class' => 'italic strong list-group-item']),
+			]);
+
+			//CHtml::createLink(
+			//	get_param($item, 'sitename'),
+			//	$link, ['class' => 'list-group-item italic']
+			//);
+
+			//$query = [
+			//	'uid' => $uid,
+			//	'data' => get_param($this->authdata, 'fullname'),
+			//];
+			//curl_setopt($req, CURLOPT_URL, $link . 'auth/');
+			//curl_setopt($req, CURLOPT_HEADER, 1);
+			//curl_setopt($req, CURLOPT_RETURNTRANSFER, 1);
+			//curl_setopt($req, CURLOPT_FOLLOWLOCATION, 1);
+			//curl_setopt($req, CURLOPT_POST, 1);
+			//curl_setopt($req, CURLOPT_POSTFIELDS, http_build_query($query));
+			//$out = curl_exec($req);
+			//var_dump($out);
+		}
+
+
+		if (in_array($uid, [80001681, 80001511, 80001571]))
+			$this->data['siteList'] .= CHtml::createLink('Административная панель', '/admin/', [
+				'class' => 'list-group-item',
+			]);
+
 		$this->render('panel');
 	}
-
-	public function ajaxHappy() {
-
-		$text = filter_input(INPUT_POST, 'text', FILTER_SANITIZE_STRING);
-		$action = filter_input(INPUT_POST, 'action', FILTER_VALIDATE_BOOLEAN);
-
-
-		$method = $action ? 'e_code' : 'd_code';
-		array_map($method, explode("\n", $text));
-		//var_dump($lines);
-	}
-
 }

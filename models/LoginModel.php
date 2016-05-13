@@ -34,4 +34,14 @@ class LoginModel extends CModel {
 
 		return $result;
 	}
+
+	public function getPerson($tabnom) {
+
+		$res = $this->select('
+ 	        SELECT p.id, p.fullname, g.pwdhash, ifnull(g.deny, 0) deny
+ 	        FROM personal p
+			LEFT JOIN person_grant g ON p.id = g.person_id AND g.deleted = 0
+			WHERE p.id = :uid AND p.deleted = 0', ['uid' => $tabnom]);
+		return get_param($res, 0);
+	}
 }

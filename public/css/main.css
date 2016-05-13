@@ -324,3 +324,9 @@ a.btn-default {
 .modal-dialog-center {
     margin-top: 15%;
 }
+
+.font-big {font-size: 1.2em;}
+.font-x2 {font-size: 2.0em;}
+.font-x3 {font-size: 3.0em;}
+.font-x4 {font-size: 4.0em;}
+.font-x5 {font-size: 5.0em;}
