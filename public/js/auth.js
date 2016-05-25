@@ -5,7 +5,7 @@
 $(function () {
     var ua = navigator.userAgent;
     var rx = new RegExp('MSIE [0-9]');
-    if (!rx.test(ua)) $('.control-label').hide();
+    if (!rx.test(ua)) $('label').hide();
 
     $('#user-field').autocomplete({
         delay: 500,
@@ -69,5 +69,18 @@ $(function () {
                 $('input[type="password"]').focus().val('');
             }
         });
+    });
+
+    $('#frm-change').submit(function (e) {
+
+        var p1 = $('#pass').val(),
+            p2 = $('#check').val();
+
+        if (p1 !== p2) {
+
+            showPopup("Пароли не совпадают.<br/>Попробуйте еще раз");
+            $('#pass, #check').val('').filter(':first').focus();
+            e.preventDefault();
+        }
     });
 });

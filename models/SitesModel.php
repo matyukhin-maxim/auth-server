@@ -29,7 +29,7 @@ class SitesModel extends CModel {
 
 		// и делаем выборку сайтов
 		return $this->select('
-			SELECT sitename, link
+			SELECT sitename, link, sitekey, passkey
 			FROM sites
 			WHERE (1 << sitekey) & :access > 0
 				AND deleted = 0', ['access' => $access]);

@@ -44,15 +44,30 @@
 				<li class="dropdown last-menu-item">
 					<a class="dropdown-toggle" data-toggle="dropdown" href="#">
 						<i class="glyphicon glyphicon-user"></i>
-						<?= get_param($authdata, 'fullname', 'n/a'); ?>
+						<?= makeSortName(get_param($authdata, 'fullname', 'n/a')); ?>
 						<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu dropdown-user">
 						<li class="dropdown-header text-right strong">
 							<?= get_param($authdata, 'fullname', '-'); ?>
 						</li>
+						<?php if (get_param($authdata, 'admin')):?>
+							<li>
+								<a href="/admin/">
+									<i class="glyphicon glyphicon-cog"></i>
+									Администрирование
+								</a>
+							</li>
+						<?php endif; ?>
 						<li class="divider"></li>
-						<li><a href="/login/exit/">
+						<li>
+							<a href="/login/password/">
+								<i class="glyphicon glyphicon-lock"></i>
+								Изменить пароль
+							</a>
+						</li>
+						<li>
+							<a href="/login/exit/">
 								<i class="glyphicon glyphicon-log-out"></i>
 								Выход
 							</a>

@@ -5,7 +5,7 @@
 				<i class="glyphicon glyphicon-globe"></i>
 				Список доступных сайтов
 				<div class="pull-right">
-					<button class="btn btn-default btn-sm" data-toggle="modal" data-target="#universal" data-remote="/admin/siteEdit/">
+					<button class="btn btn-default btn-sm strong" data-toggle="modal" data-target="#universal" data-remote="/admin/siteEdit/">
 						Новый сайт
 					</button>
 				</div>

@@ -152,8 +152,8 @@ class AdminModel extends CModel {
 	public function editSite($args) {
 
 		$cnt = 0;
-		$this->select('REPLACE INTO sites (id, sitekey, sitename, link, deleted) VALUES
-			(:sid, :s_key, :s_title, :s_link, :del)', $args, $cnt);
+		$this->select('REPLACE INTO sites (id, sitekey, sitename, link, deleted, passkey) VALUES
+			(:sid, :s_key, :s_title, :s_link, :del, :passkey)', $args, $cnt);
 
 		return $cnt > 0;
 	}

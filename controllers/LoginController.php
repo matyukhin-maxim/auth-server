@@ -61,6 +61,8 @@ class LoginController extends CController {
 				Проверте клавиши <kbd>Caps Lock</kbd> / <kbd>Num Lock</kbd> и повторите попытку");
 
 		unset($person['pwdhash']);
+		$person['admin'] = in_array($data['tabel'], [80001681, 80001511, 80001571]);
+
 		Session::set('auth', $person);
 
 		echo "OK";
@@ -68,9 +70,27 @@ class LoginController extends CController {
 
 	public function actionExit() {
 
-		Session::del('auth');
 		Session::destroy();
-
 		$this->redirect();
+	}
+
+	public function actionPassword() {
+
+		if (!$this->authdata) $this->redirect();
+		$uid = get_param($this->authdata, 'id');
+
+		if (isPOST()) {
+			// Submit формы (сохранение пароля)
+			$pw = filter_input(INPUT_POST, 'pass', FILTER_SANITIZE_STRING);
+			$ok = $this->model->changePassword($uid, $pw);
+
+			$this->preparePopup($ok ? 'Пароль успешно изменен.' : 'Не удалось изменить пароль!', 'alert-info');
+			$this->redirect();
+			return;
+		}
+
+		$this->scripts[] = 'auth';
+		$this->data['username'] = get_param($this->authdata, 'fullname');
+		$this->render('change');
 	}
 }

@@ -13,6 +13,11 @@ class AdminController extends CController {
 	public function __construct() {
 		parent::__construct();
 
+		if (get_param($this->authdata, 'admin') !== true) {
+			$this->preparePopup('Не достаточно прав доступа!');
+			$this->redirect();
+		}
+
 		$this->scripts[] = 'administration';
 		$this->data['extra'] = '';
 		$this->data['btnList'] = '';
@@ -478,6 +483,7 @@ class AdminController extends CController {
 		$this->data['s_title'] = get_param($info, 'sitename');
 		$this->data['s_key'] = get_param($info, 'sitekey');
 		$this->data['s_link'] = get_param($info, 'link');
+		$this->data['p_key'] = get_param($info, 'passkey');
 		$this->data['sid'] = get_param($info, 'id') ?: null;
 
 		echo $this->renderPartial('modal-site');
@@ -497,10 +503,12 @@ class AdminController extends CController {
 			],
 			's_link' => FILTER_VALIDATE_URL,
 			'sid' => FILTER_VALIDATE_INT,
+			'passkey' => FILTER_SANITIZE_STRING,
 		]);
 
 		$args['del'] = 0;
 		$args['s_link'] = $args['s_link'] ?: 'http://wtf.asu.ngres/';
+		$args['passkey'] = get_param($args, 'passkey') ?: Cipher::generate_token();
 
 		// Проверку на повтор индекса будем делать тут,
 		// т.к. на уровне БД сделать это не получилось

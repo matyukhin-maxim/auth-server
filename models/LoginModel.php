@@ -44,4 +44,15 @@ class LoginModel extends CModel {
 			WHERE p.id = :uid AND p.deleted = 0', ['uid' => $tabnom]);
 		return get_param($res, 0);
 	}
+
+	public function changePassword($uid, $pass) {
+
+		$cnt = 0;
+		$this->select('UPDATE person_grant SET pwdhash = :phash WHERE person_id = :uid', [
+			'uid' => $uid,
+			'phash' => sha1($pass),
+		], $cnt);
+
+		return $cnt === 1;
+	}
 }

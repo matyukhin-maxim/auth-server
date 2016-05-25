@@ -22,13 +22,21 @@
 				<input type="text" class="form-control" name="s_key" value="<?= $s_key;?>">
 			</div>
 		</div>
-		<div class="form--group row">
+		<div class="form-group row">
 			<div class="col-xs-4 text-right">
 				<label class="control-label">Ссылка на сайт :</label>
 			</div>
 			<div class="col-xs-8">
 				<input type="text" class="form-control" name="s_link" value="<?= $s_link;?>">
 				<input type="hidden" name="sid" value="<?= $sid;?>">
+			</div>
+		</div>
+		<div class="form--group row">
+			<div class="col-xs-4 text-right">
+				<label class="control-label">Ключ шифрования</label>
+			</div>
+			<div class="col-xs-8">
+				<input type="text" class="form-control" name="passkey" readonly value="<?= $p_key;?>">
 			</div>
 		</div>
 	</div>

@@ -18,6 +18,8 @@ class CController {
 	protected $authdata   = [];
 	protected $scripts;
 
+	protected $userMenu = '';
+
 	function __construct() {
 
 		$this->title = Configuration::$siteName;
@@ -36,6 +38,7 @@ class CController {
 		$defaultModel = $this->classname . "Model";
 		if (class_exists($defaultModel))
 			$this->model = new $defaultModel();
+
 	}
 
 	public function render($view, $endpage = true) {

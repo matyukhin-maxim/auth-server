@@ -12,6 +12,7 @@ class Configuration {
 	public static $scriptList = [
 		'lib/jquery.min',
 		'lib/jquery-ui.min',
+		'lib/jquery.form.min',
 		'lib/jquery.cookie',
 		'lib/bootstrap.min',
 		'lib/moment.min',

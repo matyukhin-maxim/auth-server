@@ -10,6 +10,7 @@ class CHtml {
 
 	public static function createTag($tagName, $htmlOptions = [], $content = []) {
 
+		if ($htmlOptions === null) $htmlOptions = [];
 		if (!is_array($content)) $content = array($content);
 		if (!is_array($htmlOptions)) $htmlOptions = array($htmlOptions);
 
@@ -37,7 +38,7 @@ class CHtml {
 
 	public static function createLink($text, $href = '#', $options = null) {
 
-		$options['href'] = $href;
+		$options['href'] = get_param($options, 'href', $href);
 
 		return self::createTag('a', $options, $text);
 	}
@@ -47,5 +48,10 @@ class CHtml {
 		if ($selected) $options['selected'] = true;
 
 		return self::createTag('option', $options, $title);
+	}
+
+	public static function createIcon($icon) {
+
+		return CHtml::createTag('i', ['class' => "glyphicon glyphicon-$icon"],' ');
 	}
 }
