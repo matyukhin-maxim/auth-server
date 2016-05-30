@@ -126,35 +126,32 @@ class SyncController extends CController {
 		$this->render('');
 	}
 
-	private function mb_split_all($input, $length, $count = -1) {
+	private function split_all($input, $length, $count = -1) {
 
 		$res = [];
 		if ($length < 1) return $res;
 
-		while (mb_strlen($input) && $count-- !== 0) {
+		while (strlen($input) && $count-- !== 0) {
 
-			$sub = mb_substr($input, 0, $length);
-			if (mb_strlen($sub) === $length) $res[] = $sub;
-			$input = mb_substr($input, $length);
+			$sub = substr($input, 0, $length);
+			if (strlen($sub) === $length) $res[] = $sub;
+			$input = substr($input, $length);
 		}
 		return $res;
 	}
 
-	private function mb_cnt_letters($word) {
+	private function cnt_letters($word) {
 
 		$res = [];
-		$len = mb_strlen($word);
-
-		for ($idx = 0; $idx < $len; $idx++) {
-			$s = mb_substr($word, $idx, 1);
-			$res[$s]++;
-		}
+		$len = strlen($word);
+		for ($idx = 0; $idx < $len; $idx++) $res[ $word[$idx] ]++;
 
 		return $res;
 	}
 
 	public function actionCrypt() {
-		$this->render('', false);
+		header('Content-Type: text/html; charset=cp1251');
+		//$this->render('', false);
 
 		//$text = 'шмхти — яьж оеш мнвтре. ' .
 		//	'х вуйтиыз см уюйыфэтижннчн ' .
@@ -171,41 +168,60 @@ class SyncController extends CController {
 		//	'цд ууцэсикшг ж эчбафьч — нлащфу пнпячабюп' .
 		//	' р фчлычд вчяры. ';
 
-		$text = 'ьрне чныр яечё';
+		$text = 'оаит ббнп хяпмыб юмазчб фряачма т гушкд яншиы';
 
 		$text = mb_ereg_replace('[^А-Яа-яЁё]', '', $text);
 		$len = mb_strlen($text);
-		//$alphabet = $this->mb_split_all('абвгдеёжзийклмнопрстуфхцчшщъыьэюя', 1);
 
+		$text = mb_convert_encoding($text, 'cp1251');
+
+		// метод сдвига
 		$guess = [];
+		for ($cnt = 1; $cnt < $len; $cnt++) {
 
-		for ($cnt = 1; $cnt <= 20; $cnt++) {
-
-			if ($cnt >= mb_strlen($text)) break;
-
-			$work = mb_substr($text, -$cnt) . mb_substr($text, 0, $len - $cnt);
+			$work = substr($text, $cnt) . substr($text, 0, $cnt);
 
 			$coincidence = 0;
 			for ($idx = 0; $idx < $len; $idx++)
-				$coincidence += intval(mb_substr($text, $idx, 1) === mb_substr($work, $idx, 1));
+				$coincidence += intval($text[$idx] === $work[$idx]);
 
 			$guess[$cnt] = $coincidence;
+			//var_dump([
+			//	'A' => $text,
+			//	'B' => $work,
+			//	'C' => $cnt,
+			//	'D' => $coincidence,
+			//]);
 		}
 
-		$key = array_keys($guess, max($guess))[0];
-		var_dump($key);
+		//$key = array_keys($guess, max($guess))[0];
+		$key = 5;
+		//var_dump($key);
+
+		//arsort($guess);
 		//var_dump($guess);
 
+		// индекс совпадений
+		var_dump($text);
+		for ($cnt = 2; $cnt < 10; $cnt++) {
+			$work = '';
+			for ($idx = 0; $idx < $len; $idx++)
+				if ($idx % $cnt === 0) $work .= $text[$idx];
+
+			$freq = $this->cnt_letters($work);
+			var_dump([
+				'L' => $cnt,
+				'W' => $work,
+				'F' => join(' ', array_values($freq)),
+			]);
+		}
+
 		$K = [];
-		$parts = $this->mb_split_all($text, $key, $key);
-		foreach ($parts as $sub)
-			for ($idx = 0; $idx < $key; $idx++)
-				$K[$idx] .= mb_substr($sub, $idx, 1);
+		for ($idx = 0; $idx < $len; $idx++) $K[$idx % $key] .= $text[$idx];
 
-		var_dump($parts);
-		var_dump($K);
+		//var_dump($K);
 
-		$this->render('');
+		//$this->render('');
 	}
 
 	public function getDescription() {
