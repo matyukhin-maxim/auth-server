@@ -32,14 +32,11 @@ class SitesController extends CController {
 
 		$this->data['siteList'] = '';
 
-		/**
-		 * Шифрование
-		 * Шифруем сериализованный массив, состоящий из идентификатора пользователя и текущей даты
-		 * тогда ссылки будут иметь разный вид каждый день, чтобы исключить запоминание в браузере (истории)
-		 * при расшифровке дата будет проверятся, и при не совпадении отбрасываться
-		 */
-
-		$secure = [$uid, date('Y-m-d')];
+		$secure = [
+			$uid,
+			date('Y-m-d H:i:s'),
+			makeSortName(get_param($this->authdata, 'fullname')),
+		];
 
 		foreach ($sites as $item) {
 
@@ -48,26 +45,13 @@ class SitesController extends CController {
 			$key = get_param($item, 'passkey');
 
 			$cipherText = Cipher::encode($secure, $key, true);
-			$res = Cipher::decode($cipherText, $key, true);
-			var_dump($res);
+			$link .= "auth/openid/";
+			$link .= str_replace('%', '_', urlencode($cipherText));
 
 			$this->data['siteList'] .= CHtml::createLink($name, null, [
-				'href' => $link . "auth/openid/" . urlencode($cipherText),
+				'href' => $link,
 				'class' => 'list-group-item strong italic',
 			]);
-
-			/*
-			$this->data['siteList'] .= CHtml::createTag('form', [
-				'action' => $link . 'auth/openid/',
-				//'target' => '_blank',
-				'method' => 'post',
-			], [
-				CHtml::createTag('input', ['type' => 'hidden', 'name' => 'uid', 'value' => $uid]),
-				CHtml::createTag('input', ['type' => 'hidden', 'name' => 'data', 'value' => get_param($this->authdata, 'fullname')]),
-				CHtml::createButton(get_param($item, 'sitename'), ['type' => 'submit',
-					'class' => 'italic strong list-group-item']),
-			]);
-			*/
 		}
 
 		$this->render('panel', false);
