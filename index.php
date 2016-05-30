@@ -4,8 +4,6 @@ ini_set('display_errors', 1);
 set_time_limit(0);
 error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
 
-chdir(dirname(__FILE__));
-
 require_once 'config/Config.php';
 require_once 'core/CModel.php';
 require_once 'core/CController.php';
@@ -15,7 +13,7 @@ require_once 'core/Session.php';
 require_once 'core/CHtml.php';
 require_once 'core/Cipher.php';
 
-$query = strtolower(rtrim(get_param($_GET, 'url', 'index'), '/'));
+$query = rtrim(get_param($_GET, 'url', 'index'), '/');
 $url = explode('/', $query);
 
 mb_internal_encoding("UTF-8");
@@ -28,7 +26,7 @@ try {
 		include_once $model;
 	}
 
-	$module = $url[0];
+	$module = strtolower(get_param($url, 0));
 
 	// проверяем сущевствование файла контролера (класса)
 	$file = 'controllers/' . ucfirst($module) . 'Controller.php';
@@ -48,7 +46,7 @@ try {
 	$ctrl = new $module();
 
 	// проверим существует ли нужный метод
-	$action = get_param($url, 1, 'index');
+	$action = strtolower(get_param($url, 1, 'index'));
 	$prefix = isAjax() ? 'ajax' : 'action';
 	$method = $prefix . ucfirst($action);
 
