@@ -12,6 +12,7 @@ require_once 'core/Pager.php';
 require_once 'core/Session.php';
 require_once 'core/CHtml.php';
 require_once 'core/Cipher.php';
+require_once 'core/CSQLServer.php';
 
 $query = rtrim(get_param($_GET, 'url', 'index'), '/');
 $url = explode('/', $query);
