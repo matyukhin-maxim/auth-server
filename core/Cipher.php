@@ -13,24 +13,27 @@ class Cipher {
 	public static function encode($data, $secret, $serialize = true) {
 
 		if ($serialize) $data = serialize($data);
-
-		return openssl_encrypt(
+		$crypt = openssl_encrypt(
 			$data,
 			self::$method,
 			$secret,
 			OPENSSL_ZERO_PADDING,
-			sha1('ngres')
+			substr(sha1('ngres'), 0, 16)
 		);
+
+		return strtr($crypt, '+/=', '-,_');
 	}
 
 	public static function decode($data, $secret, $serialize = true) {
+
+		$data = strtr($data, '-,_', '+/=');
 
 		$plain = openssl_decrypt(
 			$data,
 			self::$method,
 			$secret,
 			OPENSSL_ZERO_PADDING,
-			sha1('ngres')
+			substr(sha1('ngres'), 0, 16)
 		);
 
 		return $serialize ? unserialize($plain) : $plain;

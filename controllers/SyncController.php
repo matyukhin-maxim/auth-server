@@ -15,13 +15,13 @@ class SyncController extends CController {
 	public function __construct() {
 		parent::__construct();
 
-		//$this->sql = new PDO('odbc:Driver={SQL Server};Server=dgk10srv086;Database=PORTAL; Uid=portal;Pwd=12345678',
-		//	'', '', [
-		//		PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-		//		PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT,
-		//		//PDO::ATTR_EMULATE_PREPARES => false,
-		//		//PDO::ATTR_STRINGIFY_FETCHES => false,
-		//	]);
+		$this->sql = new PDO('odbc:Driver={SQL Server};Server=dgk10srv086;Database=PORTAL; Uid=portal;Pwd=12345678',
+			'', '', [
+				PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+				PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT,
+				//PDO::ATTR_EMULATE_PREPARES => false,
+				//PDO::ATTR_STRINGIFY_FETCHES => false,
+			]);
 	}
 
 	public function actionIndex() {
@@ -126,104 +126,6 @@ class SyncController extends CController {
 		$this->render('');
 	}
 
-	private function split_all($input, $length, $count = -1) {
-
-		$res = [];
-		if ($length < 1) return $res;
-
-		while (strlen($input) && $count-- !== 0) {
-
-			$sub = substr($input, 0, $length);
-			if (strlen($sub) === $length) $res[] = $sub;
-			$input = substr($input, $length);
-		}
-		return $res;
-	}
-
-	private function cnt_letters($word) {
-
-		$res = [];
-		$len = strlen($word);
-		for ($idx = 0; $idx < $len; $idx++) $res[ $word[$idx] ]++;
-
-		return $res;
-	}
-
-	public function actionCrypt() {
-		header('Content-Type: text/html; charset=cp1251');
-		//$this->render('', false);
-
-		//$text = 'шмхти — яьж оеш мнвтре. ' .
-		//	'х вуйтиыз см уюйыфэтижннчн ' .
-		//	'тейэхтфто то бъцьп. о юур ртьлн ' .
-		//	'вихпхё юхзятхну, хэшюыэи. ртьлн ' .
-		//	'рр, бъмсэи, оеъцды, м ые чрхктс ' .
-		//	'эчбафьчс — уопьтцуз, ддш н ъяяхёджсд ' .
-		//	'аьахмеэидчй ря иць-чы. юэ ё цу хцяп, ' .
-		//	'ыау ял — эщпнецъы ёьихгута. лтфяп ' .
-		//	'цтёс в вшуйгчл бтшуэпбг ёухкъйиытывбп' .
-		//	' м ёиъсвт ънъяржцб яштгоц, рксйл ' .
-		//	'сйючбятячх фэчтзц шпцтсушхржцб я фдфоьцямм' .
-		//	' п тфаслълъущ. щ ушпн аий гпбьхгаё, ычь ' .
-		//	'цд ууцэсикшг ж эчбафьч — нлащфу пнпячабюп' .
-		//	' р фчлычд вчяры. ';
-
-		$text = 'оаит ббнп хяпмыб юмазчб фряачма т гушкд яншиы';
-
-		$text = mb_ereg_replace('[^А-Яа-яЁё]', '', $text);
-		$len = mb_strlen($text);
-
-		$text = mb_convert_encoding($text, 'cp1251');
-
-		// метод сдвига
-		$guess = [];
-		for ($cnt = 1; $cnt < $len; $cnt++) {
-
-			$work = substr($text, $cnt) . substr($text, 0, $cnt);
-
-			$coincidence = 0;
-			for ($idx = 0; $idx < $len; $idx++)
-				$coincidence += intval($text[$idx] === $work[$idx]);
-
-			$guess[$cnt] = $coincidence;
-			//var_dump([
-			//	'A' => $text,
-			//	'B' => $work,
-			//	'C' => $cnt,
-			//	'D' => $coincidence,
-			//]);
-		}
-
-		//$key = array_keys($guess, max($guess))[0];
-		$key = 5;
-		//var_dump($key);
-
-		//arsort($guess);
-		//var_dump($guess);
-
-		// индекс совпадений
-		var_dump($text);
-		for ($cnt = 2; $cnt < 10; $cnt++) {
-			$work = '';
-			for ($idx = 0; $idx < $len; $idx++)
-				if ($idx % $cnt === 0) $work .= $text[$idx];
-
-			$freq = $this->cnt_letters($work);
-			var_dump([
-				'L' => $cnt,
-				'W' => $work,
-				'F' => join(' ', array_values($freq)),
-			]);
-		}
-
-		$K = [];
-		for ($idx = 0; $idx < $len; $idx++) $K[$idx % $key] .= $text[$idx];
-
-		//var_dump($K);
-
-		//$this->render('');
-	}
-
 	public function getDescription() {
 
 		return [
@@ -231,7 +133,6 @@ class SyncController extends CController {
 			'actionSyncUsers' => 'Загрузить пользователей',
 			'actionSyncPhones' => 'Загрузить телефоны',
 			'actionSyncPhotos' => 'Загрузить фотографии',
-			'actionCrypt' => 'Издевательство',
 		];
 	}
 

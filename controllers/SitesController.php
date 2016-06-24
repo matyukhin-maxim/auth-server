@@ -35,7 +35,8 @@ class SitesController extends CController {
 		$secure = [
 			$uid,
 			date('Y-m-d H:i:s'),
-			makeSortName(get_param($this->authdata, 'fullname')),
+			//makeSortName(get_param($this->authdata, 'fullname')),
+			get_param($this->authdata, 'fullname'),
 		];
 
 		foreach ($sites as $item) {
@@ -45,8 +46,11 @@ class SitesController extends CController {
 			$key = get_param($item, 'passkey');
 
 			$cipherText = Cipher::encode($secure, $key, true);
+			$cipherText = strtr($cipherText, '+/=', '-,_');
 			$link .= "auth/openid/";
-			$link .= str_replace('%', '_', urlencode($cipherText));
+			if (strpos($link, 'oper') !== false) $link .= 'token/';
+
+			$link .= $cipherText;
 
 			$this->data['siteList'] .= CHtml::createLink($name, null, [
 				'href' => $link,
